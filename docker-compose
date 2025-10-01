@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hobbystock-postgres
+    environment:
+      POSTGRES_DB: hobbystock
+      POSTGRES_USER: hobbystock
+      POSTGRES_PASSWORD: hobbystock
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./hs-db/init:/docker-entrypoint-initdb.d
+    networks:
+      - hobbystock-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hobbystock -d hobbystock"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./HSAPI
+      dockerfile: Dockerfile
+    container_name: hobbystock-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hobbystock
+      SPRING_DATASOURCE_USERNAME: hobbystock
+      SPRING_DATASOURCE_PASSWORD: hobbystock
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hobbystock-network
+    volumes:
+      - ./HSAPI:/app
+      - /app/build
+      - /app/.gradle
+
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: hobbystock-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - hobbystock-network
+
+volumes:
+  postgres_data:
+
+networks:
+  hobbystock-network:
+    driver: bridge
