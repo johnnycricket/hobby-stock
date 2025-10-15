@@ -1,0 +1,105 @@
+# Gradle/Kotlin build artifacts
+HSAPI/.gradle/
+HSAPI/build/
+HSAPI/bin/
+HSAPI/out/
+HSAPI/*.jar
+HSAPI/*.war
+HSAPI/*.ear
+HSAPI/*.class
+HSAPI/*.log
+
+# Gradle wrapper (keep gradlew and gradle/wrapper/gradle-wrapper.jar)
+HSAPI/gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+HSAPI/.idea/
+HSAPI/*.iml
+HSAPI/*.ipr
+HSAPI/*.iws
+
+# Eclipse
+HSAPI/.project
+HSAPI/.classpath
+HSAPI/.settings/
+
+# VS Code
+HSAPI/.vscode/
+
+# Node.js (for frontend)
+app/node_modules/
+app/dist/
+app/build/
+app/.env
+app/.env.local
+app/.env.development.local
+app/.env.test.local
+app/.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# Docker
+.dockerignore
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
