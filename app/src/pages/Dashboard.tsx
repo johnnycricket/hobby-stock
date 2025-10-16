@@ -86,16 +86,19 @@ export function Dashboard() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Quick Actions
           </h2>
-          <div className="space-y-3">
-            <button className="w-full btn btn-primary text-left">
-              Add New Item
-            </button>
-            <button className="w-full btn btn-secondary text-left">
+          <div className="flex flex-col space-y-2">
+            <a href="/inventory/new" className="w-full btn btn-primary">
+              Add Inventory Item
+            </a>
+            <a href="/projects/new" className="w-full btn btn-secondary">
               Create Project
-            </button>
-            <button className="w-full btn btn-secondary text-left">
+            </a>
+            <a href="/inventory" className="w-full btn btn-primary">
               View Inventory
-            </button>
+            </a>
+            <a href="/projects" className="w-full btn btn-secondary">
+              View Projects
+            </a>
           </div>
         </div>
 
