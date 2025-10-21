@@ -1,3 +1,4 @@
+import { HealthService } from "@/services/health-service";
 import { useState, useEffect } from "react";
 
 export function Home() {
@@ -8,21 +9,9 @@ export function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: "{ hello }",
-          }),
-        });
+        const response = await HealthService.checkHealth();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
+        const result = response.data?.hello;
         setData(result);
         setLoading(false);
       } catch (err) {
@@ -52,9 +41,7 @@ export function Home() {
               <p className="text-gray-500">Connecting to backend...</p>
             )}
             {error && (
-              <p className="text-red-600">
-                Backend connection failed: {error.message}
-              </p>
+              <p className="text-red-600">Backend connection failed: {error}</p>
             )}
             {data && (
               <p className="text-green-600">
