@@ -1,13 +1,38 @@
-import { gql, useQuery } from "@apollo/client";
-
-const GET_HELLO = gql`
-  query GetHello {
-    hello
-  }
-`;
+import { useState, useEffect } from "react";
 
 export function Home() {
-  const { data, loading, error } = useQuery(GET_HELLO);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: "{ hello }",
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setData(result);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="px-4 py-6 sm:px-0">
@@ -33,7 +58,7 @@ export function Home() {
             )}
             {data && (
               <p className="text-green-600">
-                ✅ Backend connected: {data.hello}
+                ✅ Backend connected: {data.data?.hello || JSON.stringify(data)}
               </p>
             )}
           </div>

@@ -25,10 +25,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     
-    // GraphQL
-    implementation("com.graphql-java:graphql-spring-boot-starter:5.0.2")
-    implementation("com.graphql-java:graphql-java-tools:5.2.4")
-    implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
+    // GraphQL - Using Spring for GraphQL (official Spring project)
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
     
     // Database
     implementation("org.postgresql:postgresql")

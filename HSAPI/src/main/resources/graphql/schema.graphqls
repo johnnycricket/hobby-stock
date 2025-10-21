@@ -1,3 +1,156 @@
 type Query {
+  # health check
   hello: String!
+
+  # categories
+  categories: [Category!]!
+  category(id: Int!): Category
+
+  # items
+  items: [Item!]!
+  item(id: Int!): Item
+  itemsByCategory(categoryId: Int): [Item!]!
+  itemsByLocation(location: String!): [Item!]!
+  lowStockItems: [Item!]!
+  searchItems(searchTerm: String!): [Item!]!
+
+  # projects
+  projects: [Project!]!
+  project(id: Int!): Project
+  projectsByStatus(status: String!): [Project!]!
+  searchProjects(searchTerm: String!): [Project!]!
+
+  # project-item relationships
+  projectItems(projectId: Int!): [ProjectItem!]!
+  itemProjects(itemId: Int!): [Project!]!
+}
+
+type Mutation {
+  # categories
+  createCategory(input: CategoryInput!): MutationResult!
+  updateCategory(id: Int!, input: CategoryInput!): MutationResult!
+  deleteCategory(id: Int!): MutationResult!
+
+  # items
+  createItem(input: ItemInput!): ItemMutationResult!
+  updateItem(id: Int!, input: ItemUpdateInput!): ItemMutationResult!
+  deleteItem(id: Int!): MutationResult!
+  adjustItemQuantity(id: Int!, quantityChange: Int!): MutationResult!
+  moveItem(id: Int!, newLocation: String!): MutationResult!
+
+  # projects
+  createProject(input: ProjectInput!): ProjectMutationResult!
+  updateProject(id: Int!, input: ProjectInput!): ProjectMutationResult!
+  deleteProject(id: Int!): MutationResult!
+  updateProjectStatus(id: Int!, status: String!): ProjectMutationResult!
+  completeProject(id: Int!, endDate: String): ProjectMutationResult!
+
+  # project-item relationships
+  addItemToProject(input: ProjectItemInput!): MutationResult!
+  updateProjectItem(id: Int!, quantityUsed: Int!): MutationResult!
+  removeItemFromProject(id: Int!): MutationResult!
+  removeItemFromProjectByIds(projectId: Int!, itemId: Int!): MutationResult!
+}
+
+# Input types
+input CategoryInput {
+  name: String!
+  description: String
+}
+
+input ItemInput {
+  name: String!
+  description: String
+  categoryId: Int!
+  quantity: Int!
+  minQuantity: Int
+  unitPrice: Float
+  location: String!
+  notes: String
+}
+
+input ProjectInput {
+  name: String!
+  description: String
+  status: String!
+  startDate: String
+  endDate: String
+}
+
+input ProjectItemInput {
+  projectId: Int!
+  itemId: Int!
+  quantityUsed: Int!
+  item: ItemInput
+}
+
+input ItemUpdateInput {
+  name: String
+  description: String
+  categoryId: Int
+  quantity: Int
+  minQuantity: Int
+  unitPrice: Float
+  location: String
+  notes: String
+}
+
+# Mutation Response types
+type MutationResult {
+  success: Boolean!
+  message: String
+}
+
+type ItemMutationResult {
+  success: Boolean!
+  message: String
+  item: Item
+}
+
+type ProjectMutationResult {
+  success: Boolean!
+  message: String
+  project: Project
+}
+
+# type types
+type Category {
+  id: Int!
+  name: String!
+  description: String!
+}
+
+type Item {
+  id: Int!
+  name: String!
+  description: String
+  categoryId: Int!
+  quantity: Int!
+  minQuantity: Int
+  unitPrice: Float
+  location: String!
+  notes: String
+  createdAt: String!
+  updatedAt: String
+  category: Category
+}
+
+type Project {
+  id: Int!
+  name: String!
+  description: String
+  status: String!
+  startDate: String
+  endDate: String
+  createdAt: String!
+  updatedAt: String
+  items: [ProjectItem]
+}
+
+type ProjectItem {
+  id: Int!
+  projectId: Int!
+  itemId: Int!
+  quantityUsed: Int
+  createdAt: String!
 }
