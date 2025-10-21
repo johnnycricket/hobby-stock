@@ -2,11 +2,14 @@ package com.hobbystock.services
 
 import com.hobbystock.entities.ProjectsEntity
 import com.hobbystock.repositories.ProjectRepository
+import com.hobbystock.types.PageInfo
 import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectInput
 import com.hobbystock.types.ProjectMutationResult
+import com.hobbystock.types.ProjectPage
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,6 +25,58 @@ class ProjectService(private val projectRepository: ProjectRepository) {
 
   fun search(searchTerm: String): List<Project> =
           projectRepository.search(searchTerm).map { it.toGraphQLType() }
+
+  // Paginated methods
+  fun findAllPaginated(page: Int = 0, size: Int = 20): ProjectPage {
+    val pageable = PageRequest.of(page, size)
+    val pageResult = projectRepository.findAll(pageable)
+
+    return ProjectPage(
+            content = pageResult.content.map { it.toGraphQLType() },
+            pageInfo =
+                    PageInfo(
+                            totalElements = pageResult.totalElements,
+                            totalPages = pageResult.totalPages,
+                            currentPage = pageResult.number,
+                            hasNext = pageResult.hasNext(),
+                            hasPrevious = pageResult.hasPrevious()
+                    )
+    )
+  }
+
+  fun findByStatusPaginated(status: String, page: Int = 0, size: Int = 20): ProjectPage {
+    val pageable = PageRequest.of(page, size)
+    val pageResult = projectRepository.findByStatus(status, pageable)
+
+    return ProjectPage(
+            content = pageResult.content.map { it.toGraphQLType() },
+            pageInfo =
+                    PageInfo(
+                            totalElements = pageResult.totalElements,
+                            totalPages = pageResult.totalPages,
+                            currentPage = pageResult.number,
+                            hasNext = pageResult.hasNext(),
+                            hasPrevious = pageResult.hasPrevious()
+                    )
+    )
+  }
+
+  fun searchPaginated(searchTerm: String, page: Int = 0, size: Int = 20): ProjectPage {
+    val pageable = PageRequest.of(page, size)
+    val pageResult = projectRepository.search(searchTerm, pageable)
+
+    return ProjectPage(
+            content = pageResult.content.map { it.toGraphQLType() },
+            pageInfo =
+                    PageInfo(
+                            totalElements = pageResult.totalElements,
+                            totalPages = pageResult.totalPages,
+                            currentPage = pageResult.number,
+                            hasNext = pageResult.hasNext(),
+                            hasPrevious = pageResult.hasPrevious()
+                    )
+    )
+  }
 
   @Transactional
   fun createProject(project: ProjectInput): Project {

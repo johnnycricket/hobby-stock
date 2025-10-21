@@ -23,6 +23,51 @@ type Query {
   # project-item relationships
   projectItems(projectId: Int!): [ProjectItem!]!
   itemProjects(itemId: Int!): [Project!]!
+
+  # Paginated queries
+  itemsPaginated(page: Int = 0, size: Int = 20): ItemPage!
+  itemsByCategoryPaginated(
+    categoryId: Int!
+    page: Int = 0
+    size: Int = 20
+  ): ItemPage!
+  itemsByLocationPaginated(
+    location: String!
+    page: Int = 0
+    size: Int = 20
+  ): ItemPage!
+  lowStockItemsPaginated(page: Int = 0, size: Int = 20): ItemPage!
+  searchItemsPaginated(
+    searchTerm: String!
+    page: Int = 0
+    size: Int = 20
+  ): ItemPage!
+
+  projectsPaginated(page: Int = 0, size: Int = 20): ProjectPage!
+  projectsByStatusPaginated(
+    status: String!
+    page: Int = 0
+    size: Int = 20
+  ): ProjectPage!
+  searchProjectsPaginated(
+    searchTerm: String!
+    page: Int = 0
+    size: Int = 20
+  ): ProjectPage!
+
+  categoriesPaginated(page: Int = 0, size: Int = 20): CategoryPage!
+
+  projectItemsPaginated(page: Int = 0, size: Int = 20): ProjectItemPage!
+  projectItemsByProjectPaginated(
+    projectId: Int!
+    page: Int = 0
+    size: Int = 20
+  ): ProjectItemPage!
+  projectItemsByItemPaginated(
+    itemId: Int!
+    page: Int = 0
+    size: Int = 20
+  ): ProjectItemPage!
 }
 
 type Mutation {
@@ -153,4 +198,33 @@ type ProjectItem {
   itemId: Int!
   quantityUsed: Int
   createdAt: String!
+}
+
+# Pagination types
+type PageInfo {
+  totalElements: Int!
+  totalPages: Int!
+  currentPage: Int!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
+}
+
+type ItemPage {
+  content: [Item!]!
+  pageInfo: PageInfo!
+}
+
+type ProjectPage {
+  content: [Project!]!
+  pageInfo: PageInfo!
+}
+
+type CategoryPage {
+  content: [Category!]!
+  pageInfo: PageInfo!
+}
+
+type ProjectItemPage {
+  content: [ProjectItem!]!
+  pageInfo: PageInfo!
 }

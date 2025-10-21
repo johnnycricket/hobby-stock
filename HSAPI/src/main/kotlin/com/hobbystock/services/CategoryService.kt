@@ -4,7 +4,10 @@ import com.hobbystock.entities.CategoryEntity
 import com.hobbystock.repositories.CategoryRepository
 import com.hobbystock.types.Category
 import com.hobbystock.types.CategoryInput
+import com.hobbystock.types.CategoryPage
 import com.hobbystock.types.MutationResult
+import com.hobbystock.types.PageInfo
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -14,6 +17,24 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
 
   fun findById(id: Int): Category? =
           categoryRepository.findById(id.toLong()).orElse(null)?.toGraphQLType()
+
+  // Paginated methods
+  fun findAllPaginated(page: Int = 0, size: Int = 20): CategoryPage {
+    val pageable = PageRequest.of(page, size)
+    val pageResult = categoryRepository.findAll(pageable)
+
+    return CategoryPage(
+            content = pageResult.content.map { it.toGraphQLType() },
+            pageInfo =
+                    PageInfo(
+                            totalElements = pageResult.totalElements,
+                            totalPages = pageResult.totalPages,
+                            currentPage = pageResult.number,
+                            hasNext = pageResult.hasNext(),
+                            hasPrevious = pageResult.hasPrevious()
+                    )
+    )
+  }
 
   @Transactional
   fun createCategory(category: CategoryInput): Category {

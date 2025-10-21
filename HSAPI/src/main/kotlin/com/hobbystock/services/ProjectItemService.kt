@@ -2,9 +2,12 @@ package com.hobbystock.services
 
 import com.hobbystock.entities.ProjectItemsEntity
 import com.hobbystock.repositories.ProjectItemRepository
+import com.hobbystock.types.PageInfo
 import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectItemInput
 import com.hobbystock.types.ProjectItemMutationResult
+import com.hobbystock.types.ProjectItemPage
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,6 +24,62 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                         ?.toGraphQLType()
         fun search(searchTerm: String): List<ProjectItem> =
                 projectItemRepository.search(searchTerm).map { it.toGraphQLType() }
+
+        // Paginated methods
+        fun findAllPaginated(page: Int = 0, size: Int = 20): ProjectItemPage {
+                val pageable = PageRequest.of(page, size)
+                val pageResult = projectItemRepository.findAll(pageable)
+
+                return ProjectItemPage(
+                        content = pageResult.content.map { it.toGraphQLType() },
+                        pageInfo =
+                                PageInfo(
+                                        totalElements = pageResult.totalElements,
+                                        totalPages = pageResult.totalPages,
+                                        currentPage = pageResult.number,
+                                        hasNext = pageResult.hasNext(),
+                                        hasPrevious = pageResult.hasPrevious()
+                                )
+                )
+        }
+
+        fun findByProjectIdPaginated(
+                projectId: Int,
+                page: Int = 0,
+                size: Int = 20
+        ): ProjectItemPage {
+                val pageable = PageRequest.of(page, size)
+                val pageResult = projectItemRepository.findByProjectId(projectId.toLong(), pageable)
+
+                return ProjectItemPage(
+                        content = pageResult.content.map { it.toGraphQLType() },
+                        pageInfo =
+                                PageInfo(
+                                        totalElements = pageResult.totalElements,
+                                        totalPages = pageResult.totalPages,
+                                        currentPage = pageResult.number,
+                                        hasNext = pageResult.hasNext(),
+                                        hasPrevious = pageResult.hasPrevious()
+                                )
+                )
+        }
+
+        fun findByItemIdPaginated(itemId: Int, page: Int = 0, size: Int = 20): ProjectItemPage {
+                val pageable = PageRequest.of(page, size)
+                val pageResult = projectItemRepository.findByItemId(itemId.toLong(), pageable)
+
+                return ProjectItemPage(
+                        content = pageResult.content.map { it.toGraphQLType() },
+                        pageInfo =
+                                PageInfo(
+                                        totalElements = pageResult.totalElements,
+                                        totalPages = pageResult.totalPages,
+                                        currentPage = pageResult.number,
+                                        hasNext = pageResult.hasNext(),
+                                        hasPrevious = pageResult.hasPrevious()
+                                )
+                )
+        }
 
         @Transactional
         fun removeItemFromProject(id: Int): ProjectItemMutationResult {

@@ -2,6 +2,8 @@ package com.hobbystock.graphql
 
 import com.hobbystock.services.ProjectService
 import com.hobbystock.types.Project
+import com.hobbystock.types.ProjectPage
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
 
@@ -26,5 +28,21 @@ class ProjectQueryController @Autowired constructor(private val projectService: 
   @QueryMapping
   fun searchProjects(searchTerm: String): List<Project> {
     return projectService.search(searchTerm)
+  }
+  
+  // Paginated queries
+  @QueryMapping
+  fun projectsPaginated(page: Int, size: Int): ProjectPage {
+    return projectService.findAllPaginated(page, size)
+  }
+  
+  @QueryMapping
+  fun projectsByStatusPaginated(status: String!, page: Int, size: Int): ProjectPage {
+    return projectService.findByStatusPaginated(status, page, size)
+  }
+  
+  @QueryMapping
+  fun searchProjectsPaginated(searchTerm: String!, page: Int, size: Int): ProjectPage {
+    return projectService.searchPaginated(searchTerm, page, size)
   }
 }

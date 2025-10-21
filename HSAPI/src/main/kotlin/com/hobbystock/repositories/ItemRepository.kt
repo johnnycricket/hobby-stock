@@ -1,6 +1,8 @@
 package com.hobbystock.repositories
 
 import com.hobbystock.entities.ItemEntity
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -15,4 +17,14 @@ interface ItemRepository : JpaRepository<ItemEntity, Long> {
             "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
     )
     fun search(@Param("searchTerm") searchTerm: String): List<ItemEntity>
+
+    // Paginated methods
+    fun findAll(pageable: Pageable): Page<ItemEntity>
+    fun findByCategoryId(categoryId: Long, pageable: Pageable): Page<ItemEntity>
+    fun findByLocation(location: String, pageable: Pageable): Page<ItemEntity>
+    fun findByQuantityLessThan(minQuantity: Int, pageable: Pageable): Page<ItemEntity>
+    @Query(
+            "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
+    )
+    fun search(@Param("searchTerm") searchTerm: String, pageable: Pageable): Page<ItemEntity>
 }
