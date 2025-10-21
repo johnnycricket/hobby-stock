@@ -6,6 +6,7 @@ import com.hobbystock.types.Category
 import com.hobbystock.types.CategoryInput
 import com.hobbystock.types.MutationResult
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CategoryService(private val categoryRepository: CategoryRepository) {
@@ -14,6 +15,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
   fun findById(id: Int): Category? =
           categoryRepository.findById(id.toLong()).orElse(null)?.toGraphQLType()
 
+  @Transactional
   fun createCategory(category: CategoryInput): Category {
     val entity =
             CategoryEntity(
@@ -24,6 +26,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
     return categoryRepository.save(entity).toGraphQLType()
   }
 
+  @Transactional
   fun updateCategory(id: Int, category: CategoryInput): Category {
     val existing =
             categoryRepository.findById(id.toLong()).orElseThrow {
@@ -33,6 +36,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
     return categoryRepository.save(updatedEntity).toGraphQLType()
   }
 
+  @Transactional
   fun deleteCategory(id: Int): MutationResult {
     return try {
       categoryRepository.deleteById(id.toLong())

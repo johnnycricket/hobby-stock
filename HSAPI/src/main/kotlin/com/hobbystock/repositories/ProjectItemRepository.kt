@@ -9,6 +9,3 @@ interface ProjectItemRepository : JpaRepository<ProjectItemsEntity, Long> {
   fun findByProjectId(projectId: Long): List<ProjectItemsEntity>
   fun findByItemId(itemId: Long): List<ProjectItemsEntity>
   fun findByProjectIdAndItemId(projectId: Long, itemId: Long): ProjectItemsEntity?
-  fun addItemToProject(projectId: Long, itemId: Long, quantityUsed: Int): ProjectItemsEntity
-  fun removeItemFromProject(projectId: Long, itemId: Long): ProjectItemsEntity
-  fun removeItemFromProjectByIds(projectId: Long, itemId: Long): ProjectItemsEntity

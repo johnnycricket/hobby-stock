@@ -7,13 +7,7 @@ import com.hobbystock.types.CategoryMutationResult
 import com.hobbystock.types.CategoryInput
 
 @Controller
-class CategoryMutationController {
-    private val categoryService: CategoryService
-
-    constructor(categoryService: CategoryService) {
-        this.categoryService = categoryService
-    }
-
+class CategoryMutationController @Autowired constructor(private val categoryService: CategoryService) {
     @MutationMapping
     fun createCategory(input: CategoryInput!): CategoryMutationResult! {
         return CategoryMutationResult(success = true, message = "Category created successfully", category = categoryService.createCategory(input))

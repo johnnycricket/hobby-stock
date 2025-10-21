@@ -7,13 +7,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.stereotype.Controller
 
 @Controller
-class ProjectItemMutationController {
-  private val projectItemService: ProjectItemService
- 
-  constructor(projectItemService: ProjectItemService) {
-    this.projectItemService = projectItemService
-  }
-
+class ProjectItemMutationController @Autowired constructor(private val projectItemService: ProjectItemService) {
   @MutationMapping
   fun addItemToProject(input: ProjectItemInput!): ProjectItemMutationResult! {
     return projectItemService.addItemToProject(input)

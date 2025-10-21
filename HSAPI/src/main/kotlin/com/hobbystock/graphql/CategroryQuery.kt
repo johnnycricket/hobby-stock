@@ -6,13 +6,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
 
 @Controller
-class CategoryQueryController {
-
-  private val categoryService: CategoryService
-
-  constructor(categoryService: CategoryService) {
-    this.categoryService = categoryService
-  }
+class CategoryQueryController @Autowired constructor(private val categoryService: CategoryService) {
 
   @QueryMapping
   fun categories(): List<Category> {

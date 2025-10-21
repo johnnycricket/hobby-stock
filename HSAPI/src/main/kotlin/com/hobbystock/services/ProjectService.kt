@@ -8,6 +8,7 @@ import com.hobbystock.types.ProjectMutationResult
 import java.time.LocalDate
 import java.time.LocalDateTime
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProjectService(private val projectRepository: ProjectRepository) {
@@ -22,6 +23,7 @@ class ProjectService(private val projectRepository: ProjectRepository) {
   fun search(searchTerm: String): List<Project> =
           projectRepository.search(searchTerm).map { it.toGraphQLType() }
 
+  @Transactional
   fun createProject(project: ProjectInput): Project {
     val entity =
             ProjectsEntity(
@@ -36,6 +38,7 @@ class ProjectService(private val projectRepository: ProjectRepository) {
     return projectRepository.save(entity).toGraphQLType()
   }
 
+  @Transactional
   fun updateProject(id: Int, project: ProjectInput): Project {
     val existing =
             projectRepository.findById(id.toLong()).orElseThrow {
@@ -52,6 +55,7 @@ class ProjectService(private val projectRepository: ProjectRepository) {
     return projectRepository.save(updatedEntity).toGraphQLType()
   }
 
+  @Transactional
   fun deleteProject(id: Int): ProjectMutationResult {
     return try {
       projectRepository.deleteById(id.toLong())
@@ -65,6 +69,7 @@ class ProjectService(private val projectRepository: ProjectRepository) {
     }
   }
 
+  @Transactional
   fun updateProjectStatus(id: Int, status: String): ProjectMutationResult {
     val existing =
             projectRepository.findById(id.toLong()).orElseThrow {
@@ -74,6 +79,7 @@ class ProjectService(private val projectRepository: ProjectRepository) {
     return projectRepository.save(updatedEntity).toGraphQLType()
   }
 
+  @Transactional
   fun completeProject(id: Int, endDate: String): ProjectMutationResult {
     val existing =
             projectRepository.findById(id.toLong()).orElseThrow {

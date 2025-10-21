@@ -6,13 +6,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
 
 @Controller
-class ProjectItemQueryController {
-  private val projectItemService: ProjectItemService
-  
-  constructor(projectItemService: ProjectItemService) {
-    this.projectItemService = projectItemService
-  }
-
+class ProjectItemQueryController @Autowired constructor(private val projectItemService: ProjectItemService) {
   @QueryMapping
   fun projectItems(projectId: Int!): List<ProjectItem> {
     return projectItemService.findByProjectId(projectId)

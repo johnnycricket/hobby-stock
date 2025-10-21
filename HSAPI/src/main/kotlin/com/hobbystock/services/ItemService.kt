@@ -9,6 +9,7 @@ import com.hobbystock.types.Item
 import com.hobbystock.types.ItemInput
 import com.hobbystock.types.ItemMutationResult
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ItemService(
@@ -33,6 +34,7 @@ class ItemService(
         fun search(searchTerm: String): List<Item> =
                 itemRepository.search(searchTerm).map { it.toGraphQLType() }
 
+        @Transactional
         fun create(input: ItemInput): Item {
                 val entity =
                         ItemEntity(
@@ -48,6 +50,7 @@ class ItemService(
                 return itemRepository.save(entity).toGraphQLType()
         }
 
+        @Transactional
         fun updateItem(id: Int, input: ItemInput): Item {
                 val existing =
                         itemRepository.findById(id.toLong()).orElseThrow {
@@ -67,6 +70,7 @@ class ItemService(
                 return itemRepository.save(updatedEntity).toGraphQLType()
         }
 
+        @Transactional
         fun deleteItem(id: Int): ItemMutationResult {
                 return try {
                         itemRepository.deleteById(id.toLong())
