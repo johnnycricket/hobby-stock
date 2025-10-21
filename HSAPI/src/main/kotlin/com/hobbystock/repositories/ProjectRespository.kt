@@ -10,18 +10,21 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProjectRepository : JpaRepository<ProjectsEntity, Long> {
-  fun findByStatus(status: String): List<ProjectsEntity>
+        fun findByStatus(status: String): List<ProjectsEntity>
 
-  @Query(
-          "SELECT p FROM ProjectsEntity p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
-  )
-  fun search(@Param("searchTerm") searchTerm: String): List<ProjectsEntity>
+        @Query(
+                "SELECT p FROM ProjectsEntity p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
+        )
+        fun search(@Param("searchTerm") searchTerm: String): List<ProjectsEntity>
 
-  // Paginated methods
-  fun findAll(pageable: Pageable): Page<ProjectsEntity>
-  fun findByStatus(status: String, pageable: Pageable): Page<ProjectsEntity>
-  @Query(
-          "SELECT p FROM ProjectsEntity p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
-  )
-  fun search(@Param("searchTerm") searchTerm: String, pageable: Pageable): Page<ProjectsEntity>
+        // Paginated methods
+        override fun findAll(pageable: Pageable): Page<ProjectsEntity>
+        fun findByStatus(status: String, pageable: Pageable): Page<ProjectsEntity>
+        @Query(
+                "SELECT p FROM ProjectsEntity p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
+        )
+        fun search(
+                @Param("searchTerm") searchTerm: String,
+                pageable: Pageable
+        ): Page<ProjectsEntity>
 }

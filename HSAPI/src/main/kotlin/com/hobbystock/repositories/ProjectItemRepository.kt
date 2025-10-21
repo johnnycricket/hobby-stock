@@ -11,8 +11,9 @@ interface ProjectItemRepository : JpaRepository<ProjectItemsEntity, Long> {
   fun findByProjectId(projectId: Long): List<ProjectItemsEntity>
   fun findByItemId(itemId: Long): List<ProjectItemsEntity>
   fun findByProjectIdAndItemId(projectId: Long, itemId: Long): ProjectItemsEntity?
-  
+
   // Paginated methods
-  fun findAll(pageable: Pageable): Page<ProjectItemsEntity>
+  override fun findAll(pageable: Pageable): Page<ProjectItemsEntity>
   fun findByProjectId(projectId: Long, pageable: Pageable): Page<ProjectItemsEntity>
   fun findByItemId(itemId: Long, pageable: Pageable): Page<ProjectItemsEntity>
+}

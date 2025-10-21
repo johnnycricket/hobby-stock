@@ -11,5 +11,5 @@ interface CategoryRepository : JpaRepository<CategoryEntity, Long> {
   fun findByName(name: String): CategoryEntity?
 
   // Paginated methods
-  fun findAll(pageable: Pageable): Page<CategoryEntity>
+  override fun findAll(pageable: Pageable): Page<CategoryEntity>
 }

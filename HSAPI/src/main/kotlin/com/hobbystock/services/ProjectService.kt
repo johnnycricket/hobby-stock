@@ -131,17 +131,27 @@ class ProjectService(private val projectRepository: ProjectRepository) {
               NoSuchElementException("Project not found")
             }
     val updatedEntity = existing.copy(status = status)
-    return projectRepository.save(updatedEntity).toGraphQLType()
+    val savedProject = projectRepository.save(updatedEntity).toGraphQLType()
+    return ProjectMutationResult(
+            success = true,
+            message = "Project status updated successfully",
+            project = savedProject
+    )
   }
 
   @Transactional
-  fun completeProject(id: Int, endDate: String): ProjectMutationResult {
+  fun completeProject(id: Int, endDate: String?): ProjectMutationResult {
     val existing =
             projectRepository.findById(id.toLong()).orElseThrow {
               NoSuchElementException("Project not found")
             }
     val updatedEntity = existing.copy(endDate = endDate?.let { LocalDate.parse(it) })
-    return projectRepository.save(updatedEntity).toGraphQLType()
+    val savedProject = projectRepository.save(updatedEntity).toGraphQLType()
+    return ProjectMutationResult(
+            success = true,
+            message = "Project completed successfully",
+            project = savedProject
+    )
   }
 }
 

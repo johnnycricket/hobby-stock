@@ -10,21 +10,21 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ItemRepository : JpaRepository<ItemEntity, Long> {
-    fun findByCategoryId(categoryId: Long): List<ItemEntity>
-    fun findByLocation(location: String): List<ItemEntity>
-    fun findByQuantityLessThan(minQuantity: Int): List<ItemEntity>
-    @Query(
-            "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
-    )
-    fun search(@Param("searchTerm") searchTerm: String): List<ItemEntity>
+        fun findByCategoryId(categoryId: Long): List<ItemEntity>
+        fun findByLocation(location: String): List<ItemEntity>
+        fun findByQuantityLessThan(minQuantity: Int): List<ItemEntity>
+        @Query(
+                "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
+        )
+        fun search(@Param("searchTerm") searchTerm: String): List<ItemEntity>
 
-    // Paginated methods
-    fun findAll(pageable: Pageable): Page<ItemEntity>
-    fun findByCategoryId(categoryId: Long, pageable: Pageable): Page<ItemEntity>
-    fun findByLocation(location: String, pageable: Pageable): Page<ItemEntity>
-    fun findByQuantityLessThan(minQuantity: Int, pageable: Pageable): Page<ItemEntity>
-    @Query(
-            "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
-    )
-    fun search(@Param("searchTerm") searchTerm: String, pageable: Pageable): Page<ItemEntity>
+        // Paginated methods
+        override fun findAll(pageable: Pageable): Page<ItemEntity>
+        fun findByCategoryId(categoryId: Long, pageable: Pageable): Page<ItemEntity>
+        fun findByLocation(location: String, pageable: Pageable): Page<ItemEntity>
+        fun findByQuantityLessThan(minQuantity: Int, pageable: Pageable): Page<ItemEntity>
+        @Query(
+                "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
+        )
+        fun search(@Param("searchTerm") searchTerm: String, pageable: Pageable): Page<ItemEntity>
 }

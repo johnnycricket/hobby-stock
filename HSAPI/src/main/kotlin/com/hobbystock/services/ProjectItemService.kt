@@ -1,8 +1,10 @@
 package com.hobbystock.services
 
 import com.hobbystock.entities.ProjectItemsEntity
+import com.hobbystock.entities.ProjectsEntity
 import com.hobbystock.repositories.ProjectItemRepository
 import com.hobbystock.types.PageInfo
+import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectItemInput
 import com.hobbystock.types.ProjectItemMutationResult
@@ -18,12 +20,28 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                 projectItemRepository.findByProjectId(projectId.toLong()).map { it.toGraphQLType() }
         fun findByItemId(itemId: Int): List<ProjectItem> =
                 projectItemRepository.findByItemId(itemId.toLong()).map { it.toGraphQLType() }
+
+        fun findProjectsByItemId(itemId: Int): List<Project> =
+                projectItemRepository.findByItemId(itemId.toLong()).map {
+                        it.project?.toProjectGraphQLType()
+                                ?: throw IllegalStateException("Project not found")
+                }
         fun findByProjectIdAndItemId(projectId: Int, itemId: Int): ProjectItem =
                 projectItemRepository
                         .findByProjectIdAndItemId(projectId.toLong(), itemId.toLong())
                         ?.toGraphQLType()
+                        ?: throw NoSuchElementException("Project item not found")
         fun search(searchTerm: String): List<ProjectItem> =
-                projectItemRepository.search(searchTerm).map { it.toGraphQLType() }
+                projectItemRepository
+                        .findAll()
+                        .filter {
+                                it.item?.name?.contains(searchTerm, ignoreCase = true) == true ||
+                                        it.item?.description?.contains(
+                                                searchTerm,
+                                                ignoreCase = true
+                                        ) == true
+                        }
+                        .map { it.toGraphQLType() }
 
         // Paginated methods
         fun findAllPaginated(page: Int = 0, size: Int = 20): ProjectItemPage {
@@ -109,9 +127,14 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                         ProjectItemsEntity(
                                 projectId = input.projectId.toLong(),
                                 itemId = input.itemId.toLong(),
-                                quantityUsed = input.quantityUsed
+                                quantityUsed = input.quantityUsed ?: 0
                         )
-                return projectItemRepository.save(entity).toGraphQLType()
+                val savedProjectItem = projectItemRepository.save(entity).toGraphQLType()
+                return ProjectItemMutationResult(
+                        success = true,
+                        message = "Item added to project successfully",
+                        projectItem = savedProjectItem
+                )
         }
         @Transactional
         fun updateProjectItem(id: Int, quantityUsed: Int): ProjectItemMutationResult {
@@ -120,7 +143,12 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                                 NoSuchElementException("Project item not found")
                         }
                 val updatedEntity = entity.copy(quantityUsed = quantityUsed)
-                return projectItemRepository.save(updatedEntity).toGraphQLType()
+                val savedProjectItem = projectItemRepository.save(updatedEntity).toGraphQLType()
+                return ProjectItemMutationResult(
+                        success = true,
+                        message = "Project item updated successfully",
+                        projectItem = savedProjectItem
+                )
         }
         @Transactional
         fun removeItemFromProjectByIds(projectId: Int, itemId: Int): ProjectItemMutationResult {
@@ -154,4 +182,16 @@ private fun ProjectItemsEntity.toGraphQLType(): ProjectItem =
                 itemId = this.itemId.toInt(),
                 quantityUsed = this.quantityUsed,
                 createdAt = this.createdAt.toString()
+        )
+
+private fun ProjectsEntity.toProjectGraphQLType(): Project =
+        Project(
+                id = this.id.toInt(),
+                name = this.name,
+                description = this.description,
+                status = this.status,
+                startDate = this.startDate?.toString(),
+                endDate = this.endDate?.toString(),
+                createdAt = this.createdAt.toString(),
+                updatedAt = this.updatedAt?.toString()
         )

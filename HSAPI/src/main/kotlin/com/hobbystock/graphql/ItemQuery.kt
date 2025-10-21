@@ -38,30 +38,30 @@ class ItemQueryController @Autowired constructor(private val itemService: ItemSe
   fun searchItems(searchTerm: String): List<Item> {
     return itemService.search(searchTerm)
   }
-  
+
   // Paginated queries
   @QueryMapping
   fun itemsPaginated(page: Int, size: Int): ItemPage {
     return itemService.findAllPaginated(page, size)
   }
-  
+
   @QueryMapping
-  fun itemsByCategoryPaginated(categoryId: Int!, page: Int, size: Int): ItemPage {
+  fun itemsByCategoryPaginated(categoryId: Int, page: Int, size: Int): ItemPage {
     return itemService.findByCategoryIdPaginated(categoryId, page, size)
   }
-  
+
   @QueryMapping
-  fun itemsByLocationPaginated(location: String!, page: Int, size: Int): ItemPage {
+  fun itemsByLocationPaginated(location: String, page: Int, size: Int): ItemPage {
     return itemService.findByLocationPaginated(location, page, size)
   }
-  
+
   @QueryMapping
   fun lowStockItemsPaginated(page: Int, size: Int): ItemPage {
     return itemService.findLowStockItemsPaginated(page, size)
   }
-  
+
   @QueryMapping
-  fun searchItemsPaginated(searchTerm: String!, page: Int, size: Int): ItemPage {
+  fun searchItemsPaginated(searchTerm: String, page: Int, size: Int): ItemPage {
     return itemService.searchPaginated(searchTerm, page, size)
   }
 }
