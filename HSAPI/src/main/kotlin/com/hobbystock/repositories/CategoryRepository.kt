@@ -6,7 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CategoryRepository : JpaRepository<CategoryEntity, Long> {
-  override fun findAll(): List<CategoryEntity>
-  override fun findById(id: Long): java.util.Optional<CategoryEntity>
   fun findByName(name: String): CategoryEntity?
 }

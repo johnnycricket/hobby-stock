@@ -13,7 +13,7 @@ data class ProjectItemsEntity(
         @Column(name = "created_at") val createdAt: LocalDateTime = LocalDateTime.now(),
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "project_id", insertable = false, updatable = false)
-        val project: ProjectEntity? = null,
+        val project: ProjectsEntity? = null,
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "item_id", insertable = false, updatable = false)
         val item: ItemEntity? = null

@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ItemRepository : JpaRepository<ItemEntity, Long> {
-    override fun findAll(): List<ItemEntity>
-    override fun findById(id: Long): java.util.Optional<ItemEntity>
     fun findByCategoryId(categoryId: Long): List<ItemEntity>
     fun findByLocation(location: String): List<ItemEntity>
     fun findByQuantityLessThan(minQuantity: Int): List<ItemEntity>

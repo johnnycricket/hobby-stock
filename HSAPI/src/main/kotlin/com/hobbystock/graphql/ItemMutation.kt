@@ -1,0 +1,31 @@
+package com.hobbystock.graphql
+
+import com.hobbystock.services.ItemService
+import com.hobbystock.types.ItemInput
+import com.hobbystock.types.ItemMutationResult
+import org.springframework.graphql.data.method.annotation.MutationMapping
+import org.springframework.stereotype.Controller
+
+@Controller
+class ItemMutationController {
+  private val itemService: ItemService
+  
+  constructor(itemService: ItemService) {
+    this.itemService = itemService
+  }
+
+  @MutationMapping
+  fun createItem(input: ItemInput!): ItemMutationResult! {
+    return ItemMutationResult(success = true, message = "Item created successfully", item = itemService.create(input))
+  }
+  
+  @MutationMapping
+  fun updateItem(id: Int!, input: ItemInput!): ItemMutationResult! {
+    return ItemMutationResult(success = true, message = "Item updated successfully", item = itemService.updateItem(id, input))
+  }
+
+  @MutationMapping
+  fun deleteItem(id: Int!): ItemMutationResult! {
+    return itemService.deleteItem(id)
+  }
+}
