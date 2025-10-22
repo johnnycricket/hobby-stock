@@ -21,7 +21,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsPaginated(page: ${page}, size: ${size}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { itemsPaginated(page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -73,7 +73,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByCategoryPaginated(categoryId: ${categoryId}, page: ${page}, size: ${size}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { itemsByCategoryPaginated(categoryId: ${categoryId}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -109,7 +109,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByLocationPaginated(location: ${location}, page: ${page}, size: ${size}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { itemsByLocationPaginated(location: ${location}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -144,7 +144,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { lowStockItemsPaginated(page: ${page}, size: ${size}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { lowStockItemsPaginated(page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -180,7 +180,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { searchItemsPaginated(searchTerm: ${searchTerm}, page: ${page}, size: ${size}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { searchItemsPaginated(searchTerm: ${searchTerm}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {

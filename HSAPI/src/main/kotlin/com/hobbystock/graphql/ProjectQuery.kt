@@ -32,17 +32,17 @@ class ProjectQueryController @Autowired constructor(private val projectService: 
 
   // Paginated queries
   @QueryMapping
-  fun projectsPaginated(page: Int, size: Int): ProjectPage {
+  fun projectsPaginated(page: Int = 0, size: Int = 20): ProjectPage {
     return projectService.findAllPaginated(page, size)
   }
 
   @QueryMapping
-  fun projectsByStatusPaginated(status: String, page: Int, size: Int): ProjectPage {
+  fun projectsByStatusPaginated(status: String, page: Int = 0, size: Int = 20): ProjectPage {
     return projectService.findByStatusPaginated(status, page, size)
   }
 
   @QueryMapping
-  fun searchProjectsPaginated(searchTerm: String, page: Int, size: Int): ProjectPage {
+  fun searchProjectsPaginated(searchTerm: String, page: Int = 0, size: Int = 20): ProjectPage {
     return projectService.searchPaginated(searchTerm, page, size)
   }
 }

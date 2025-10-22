@@ -23,7 +23,7 @@ class CategoryQueryController @Autowired constructor(private val categoryService
 
   // Paginated queries
   @QueryMapping
-  fun categoriesPaginated(page: Int, size: Int): CategoryPage {
+  fun categoriesPaginated(page: Int = 0, size: Int = 20): CategoryPage {
     return categoryService.findAllPaginated(page, size)
   }
 }

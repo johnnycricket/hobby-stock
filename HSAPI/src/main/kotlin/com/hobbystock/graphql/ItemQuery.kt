@@ -4,6 +4,7 @@ import com.hobbystock.services.ItemService
 import com.hobbystock.types.Item
 import com.hobbystock.types.ItemPage
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
 
@@ -41,27 +42,27 @@ class ItemQueryController @Autowired constructor(private val itemService: ItemSe
 
   // Paginated queries
   @QueryMapping
-  fun itemsPaginated(page: Int, size: Int): ItemPage {
+  fun itemsPaginated(@Argument page: Int = 0, @Argument size: Int = 20): ItemPage {
     return itemService.findAllPaginated(page, size)
   }
 
   @QueryMapping
-  fun itemsByCategoryPaginated(categoryId: Int, page: Int, size: Int): ItemPage {
+  fun itemsByCategoryPaginated(categoryId: Int, page: Int = 0, size: Int = 20): ItemPage {
     return itemService.findByCategoryIdPaginated(categoryId, page, size)
   }
 
   @QueryMapping
-  fun itemsByLocationPaginated(location: String, page: Int, size: Int): ItemPage {
+  fun itemsByLocationPaginated(location: String, page: Int = 0, size: Int = 20): ItemPage {
     return itemService.findByLocationPaginated(location, page, size)
   }
 
   @QueryMapping
-  fun lowStockItemsPaginated(page: Int, size: Int): ItemPage {
+  fun lowStockItemsPaginated(page: Int = 0, size: Int = 20): ItemPage {
     return itemService.findLowStockItemsPaginated(page, size)
   }
 
   @QueryMapping
-  fun searchItemsPaginated(searchTerm: String, page: Int, size: Int): ItemPage {
+  fun searchItemsPaginated(searchTerm: String, page: Int = 0, size: Int = 20): ItemPage {
     return itemService.searchPaginated(searchTerm, page, size)
   }
 }

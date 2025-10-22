@@ -34,17 +34,21 @@ constructor(private val projectItemService: ProjectItemService) {
 
   // Paginated queries
   @QueryMapping
-  fun projectItemsPaginated(page: Int, size: Int): ProjectItemPage {
+  fun projectItemsPaginated(page: Int = 0, size: Int = 20): ProjectItemPage {
     return projectItemService.findAllPaginated(page, size)
   }
 
   @QueryMapping
-  fun projectItemsByProjectPaginated(projectId: Int, page: Int, size: Int): ProjectItemPage {
+  fun projectItemsByProjectPaginated(
+          projectId: Int,
+          page: Int = 0,
+          size: Int = 20
+  ): ProjectItemPage {
     return projectItemService.findByProjectIdPaginated(projectId, page, size)
   }
 
   @QueryMapping
-  fun projectItemsByItemPaginated(itemId: Int, page: Int, size: Int): ProjectItemPage {
+  fun projectItemsByItemPaginated(itemId: Int, page: Int = 0, size: Int = 20): ProjectItemPage {
     return projectItemService.findByItemIdPaginated(itemId, page, size)
   }
 }
