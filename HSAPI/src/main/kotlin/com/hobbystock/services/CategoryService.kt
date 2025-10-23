@@ -40,7 +40,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
   fun createCategory(category: CategoryInput): Category {
     val entity =
             CategoryEntity(
-                    id = 0L, // Assuming new entity; set to 0 or null for auto-generated
+                    id = 0, // Assuming new entity; set to 0 or null for auto-generated
                     name = category.name,
                     description = category.description
             )

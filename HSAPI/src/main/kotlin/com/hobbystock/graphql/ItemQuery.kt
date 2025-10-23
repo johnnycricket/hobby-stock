@@ -3,6 +3,7 @@ package com.hobbystock.graphql
 import com.hobbystock.services.ItemService
 import com.hobbystock.types.Item
 import com.hobbystock.types.ItemPage
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
@@ -16,7 +17,7 @@ class ItemQueryController @Autowired constructor(private val itemService: ItemSe
   }
 
   @QueryMapping
-  fun item(id: Int): Item {
+  fun item(id: UUID): Item {
     return itemService.findById(id) ?: throw NoSuchElementException("Item not found for id: $id")
   }
 

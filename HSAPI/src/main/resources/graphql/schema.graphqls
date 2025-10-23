@@ -8,26 +8,26 @@ type Query {
 
   # items
   items: [Item!]!
-  item(id: Int!): Item
-  itemsByCategory(categoryId: Int): [Item!]!
+  item(id: String!): Item
+  itemsByCategory(categoryId: String): [Item!]!
   itemsByLocation(location: String!): [Item!]!
   lowStockItems: [Item!]!
   searchItems(searchTerm: String!): [Item!]!
 
   # projects
   projects: [Project!]!
-  project(id: Int!): Project
+  project(id: String!): Project
   projectsByStatus(status: String!): [Project!]!
   searchProjects(searchTerm: String!): [Project!]!
 
   # project-item relationships
-  projectItems(projectId: Int!): [ProjectItem!]!
-  itemProjects(itemId: Int!): [Project!]!
+  projectItems(projectId: String!): [ProjectItem!]!
+  itemProjects(itemId: String!): [Project!]!
 
   # Paginated queries
   itemsPaginated(page: Int = 0, size: Int = 20): ItemPage!
   itemsByCategoryPaginated(
-    categoryId: Int!
+    categoryId: String!
     page: Int = 0
     size: Int = 20
   ): ItemPage!
@@ -59,12 +59,12 @@ type Query {
 
   projectItemsPaginated(page: Int = 0, size: Int = 20): ProjectItemPage!
   projectItemsByProjectPaginated(
-    projectId: Int!
+    projectId: String!
     page: Int = 0
     size: Int = 20
   ): ProjectItemPage!
   projectItemsByItemPaginated(
-    itemId: Int!
+    itemId: String!
     page: Int = 0
     size: Int = 20
   ): ProjectItemPage!
@@ -73,28 +73,31 @@ type Query {
 type Mutation {
   # categories
   createCategory(input: CategoryInput!): MutationResult!
-  updateCategory(id: Int!, input: CategoryInput!): MutationResult!
-  deleteCategory(id: Int!): MutationResult!
+  updateCategory(id: String!, input: CategoryInput!): MutationResult!
+  deleteCategory(id: String!): MutationResult!
 
   # items
   createItem(input: ItemInput!): ItemMutationResult!
-  updateItem(id: Int!, input: ItemUpdateInput!): ItemMutationResult!
-  deleteItem(id: Int!): MutationResult!
-  adjustItemQuantity(id: Int!, quantityChange: Int!): MutationResult!
-  moveItem(id: Int!, newLocation: String!): MutationResult!
+  updateItem(id: String!, input: ItemUpdateInput!): ItemMutationResult!
+  deleteItem(id: String!): MutationResult!
+  adjustItemQuantity(id: String!, quantityChange: Int!): MutationResult!
+  moveItem(id: String!, newLocation: String!): MutationResult!
 
   # projects
   createProject(input: ProjectInput!): ProjectMutationResult!
-  updateProject(id: Int!, input: ProjectInput!): ProjectMutationResult!
-  deleteProject(id: Int!): MutationResult!
-  updateProjectStatus(id: Int!, status: String!): ProjectMutationResult!
-  completeProject(id: Int!, endDate: String): ProjectMutationResult!
+  updateProject(id: String!, input: ProjectInput!): ProjectMutationResult!
+  deleteProject(id: String!): MutationResult!
+  updateProjectStatus(id: String!, status: String!): ProjectMutationResult!
+  completeProject(id: String!, endDate: String): ProjectMutationResult!
 
   # project-item relationships
   addItemToProject(input: ProjectItemInput!): MutationResult!
-  updateProjectItem(id: Int!, quantityUsed: Int!): MutationResult!
-  removeItemFromProject(id: Int!): MutationResult!
-  removeItemFromProjectByIds(projectId: Int!, itemId: Int!): MutationResult!
+  updateProjectItem(id: String!, quantityUsed: Int!): MutationResult!
+  removeItemFromProject(id: String!): MutationResult!
+  removeItemFromProjectByIds(
+    projectId: String!
+    itemId: String!
+  ): MutationResult!
 }
 
 # Input types
@@ -106,7 +109,7 @@ input CategoryInput {
 input ItemInput {
   name: String!
   description: String
-  categoryId: Int!
+  categoryId: String!
   quantity: Int!
   minQuantity: Int
   unitPrice: Float
@@ -123,8 +126,8 @@ input ProjectInput {
 }
 
 input ProjectItemInput {
-  projectId: Int!
-  itemId: Int!
+  projectId: String!
+  itemId: String!
   quantityUsed: Int!
   item: ItemInput
 }
@@ -166,7 +169,7 @@ type Category {
 }
 
 type Item {
-  id: Int!
+  id: String!
   name: String!
   description: String
   categoryId: Int!
@@ -181,7 +184,7 @@ type Item {
 }
 
 type Project {
-  id: Int!
+  id: String!
   name: String!
   description: String
   status: String!
@@ -193,9 +196,9 @@ type Project {
 }
 
 type ProjectItem {
-  id: Int!
-  projectId: Int!
-  itemId: Int!
+  id: String!
+  projectId: String!
+  itemId: String!
   quantityUsed: Int
   createdAt: String!
 }

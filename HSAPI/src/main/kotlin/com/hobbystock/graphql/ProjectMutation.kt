@@ -3,6 +3,7 @@ package com.hobbystock.graphql
 import com.hobbystock.services.ProjectService
 import com.hobbystock.types.ProjectInput
 import com.hobbystock.types.ProjectMutationResult
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.stereotype.Controller
@@ -19,7 +20,7 @@ class ProjectMutationController @Autowired constructor(private val projectServic
   }
 
   @MutationMapping
-  fun updateProject(id: Int, input: ProjectInput): ProjectMutationResult {
+  fun updateProject(id: UUID, input: ProjectInput): ProjectMutationResult {
     return ProjectMutationResult(
             success = true,
             message = "Project updated successfully",
@@ -28,17 +29,17 @@ class ProjectMutationController @Autowired constructor(private val projectServic
   }
 
   @MutationMapping
-  fun deleteProject(id: Int): ProjectMutationResult {
+  fun deleteProject(id: UUID): ProjectMutationResult {
     return projectService.deleteProject(id)
   }
 
   @MutationMapping
-  fun updateProjectStatus(id: Int, status: String): ProjectMutationResult {
+  fun updateProjectStatus(id: UUID, status: String): ProjectMutationResult {
     return projectService.updateProjectStatus(id, status)
   }
 
   @MutationMapping
-  fun completeProject(id: Int, endDate: String?): ProjectMutationResult {
+  fun completeProject(id: UUID, endDate: String?): ProjectMutationResult {
     return projectService.completeProject(id, endDate)
   }
 }

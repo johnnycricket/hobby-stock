@@ -196,9 +196,33 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { createItem(input: ${JSON.stringify(
-          item
-        )}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `mutation CreateItem($input: ItemInput!) {
+          createItem(input: $input) {
+            success
+            message
+            item {
+              id
+              name
+              description
+              categoryId
+              quantity
+              minQuantity
+              unitPrice
+              location
+              notes
+              createdAt
+              updatedAt
+              category {
+                id
+                name
+                description
+              }
+            }
+          }
+        }`,
+        variables: {
+          input: item,
+        },
       }),
     });
     if (!response.ok) {

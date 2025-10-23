@@ -10,6 +10,7 @@ import com.hobbystock.types.ItemInput
 import com.hobbystock.types.ItemMutationResult
 import com.hobbystock.types.ItemPage
 import com.hobbystock.types.PageInfo
+import java.util.UUID
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,11 +23,10 @@ class ItemService(
 
         fun findAll(): List<Item> = itemRepository.findAll().map { it.toGraphQLType() }
 
-        fun findById(id: Int): Item? =
-                itemRepository.findById(id.toLong()).orElse(null)?.toGraphQLType()
+        fun findById(id: UUID): Item? = itemRepository.findById(id).orElse(null)?.toGraphQLType()
 
         fun findByCategoryId(categoryId: Int): List<Item> =
-                itemRepository.findByCategoryId(categoryId.toLong()).map { it.toGraphQLType() }
+                itemRepository.findByCategoryId(categoryId).map { it.toGraphQLType() }
 
         fun findByLocation(location: String): List<Item> =
                 itemRepository.findByLocation(location).map { it.toGraphQLType() }
@@ -57,7 +57,7 @@ class ItemService(
 
         fun findByCategoryIdPaginated(categoryId: Int, page: Int = 0, size: Int = 20): ItemPage {
                 val pageable = PageRequest.of(page, size)
-                val pageResult = itemRepository.findByCategoryId(categoryId.toLong(), pageable)
+                val pageResult = itemRepository.findByCategoryId(categoryId, pageable)
 
                 return ItemPage(
                         content = pageResult.content.map { it.toGraphQLType() },
@@ -125,31 +125,37 @@ class ItemService(
 
         @Transactional
         fun create(input: ItemInput): Item {
+                println("DEBUG: Received ItemInput: $input")
+                println(
+                        "DEBUG: categoryId value: ${input.categoryId}, type: ${input.categoryId::class}"
+                )
+
                 val entity =
                         ItemEntity(
                                 name = input.name,
                                 description = input.description,
-                                categoryId = input.categoryId.toLong(),
+                                categoryId = input.categoryId,
                                 quantity = input.quantity,
                                 minQuantity = input.minQuantity,
                                 unitPrice = input.unitPrice?.toBigDecimal(),
                                 location = input.location,
                                 notes = input.notes
                         )
+                println("DEBUG: Created entity with categoryId: ${entity.categoryId}")
                 return itemRepository.save(entity).toGraphQLType()
         }
 
         @Transactional
-        fun updateItem(id: Int, input: ItemInput): Item {
+        fun updateItem(id: UUID, input: ItemInput): Item {
                 val existing =
-                        itemRepository.findById(id.toLong()).orElseThrow {
+                        itemRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Item not found")
                         }
                 val updatedEntity =
                         existing.copy(
                                 name = input.name,
                                 description = input.description,
-                                categoryId = input.categoryId.toLong(),
+                                categoryId = input.categoryId,
                                 quantity = input.quantity,
                                 minQuantity = input.minQuantity,
                                 unitPrice = input.unitPrice?.toBigDecimal(),
@@ -160,9 +166,9 @@ class ItemService(
         }
 
         @Transactional
-        fun deleteItem(id: Int): ItemMutationResult {
+        fun deleteItem(id: UUID): ItemMutationResult {
                 return try {
-                        itemRepository.deleteById(id.toLong())
+                        itemRepository.deleteById(id)
                         ItemMutationResult(
                                 success = true,
                                 message = "Item deleted successfully",
@@ -175,10 +181,10 @@ class ItemService(
         // Extension function to convert Entity to GraphQL type
         private fun ItemEntity.toGraphQLType(): Item =
                 Item(
-                        id = this.id.toInt(),
+                        id = this.id!!,
                         name = this.name,
                         description = this.description,
-                        categoryId = this.categoryId.toInt(),
+                        categoryId = this.categoryId,
                         quantity = this.quantity,
                         minQuantity = this.minQuantity,
                         unitPrice = this.unitPrice?.toFloat(),
@@ -190,5 +196,5 @@ class ItemService(
                 )
 
         private fun CategoryEntity.toGraphQLType(): Category =
-                Category(id = this.id.toInt(), name = this.name, description = this.description)
+                Category(id = this.id!!, name = this.name, description = this.description)
 }

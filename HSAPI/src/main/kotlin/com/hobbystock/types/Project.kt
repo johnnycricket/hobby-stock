@@ -1,7 +1,9 @@
 package com.hobbystock.types
 
+import java.util.UUID
+
 data class Project(
-        val id: Int,
+        val id: UUID,
         val name: String,
         val description: String?,
         val status: String,

@@ -3,6 +3,7 @@ package com.hobbystock.graphql
 import com.hobbystock.services.ProjectService
 import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectPage
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
@@ -15,7 +16,7 @@ class ProjectQueryController @Autowired constructor(private val projectService: 
   }
 
   @QueryMapping
-  fun project(id: Int): Project {
+  fun project(id: UUID): Project {
     return projectService.findById(id)
             ?: throw NoSuchElementException("Project not found for id: $id")
   }

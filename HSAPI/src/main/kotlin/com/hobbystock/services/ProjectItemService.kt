@@ -9,6 +9,7 @@ import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectItemInput
 import com.hobbystock.types.ProjectItemMutationResult
 import com.hobbystock.types.ProjectItemPage
+import java.util.UUID
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,20 +17,18 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ProjectItemService(private val projectItemRepository: ProjectItemRepository) {
 
-        fun findByProjectId(projectId: Int): List<ProjectItem> =
-                projectItemRepository.findByProjectId(projectId.toLong()).map { it.toGraphQLType() }
-        fun findByItemId(itemId: Int): List<ProjectItem> =
-                projectItemRepository.findByItemId(itemId.toLong()).map { it.toGraphQLType() }
+        fun findByProjectId(projectId: UUID): List<ProjectItem> =
+                projectItemRepository.findByProjectId(projectId).map { it.toGraphQLType() }
+        fun findByItemId(itemId: UUID): List<ProjectItem> =
+                projectItemRepository.findByItemId(itemId).map { it.toGraphQLType() }
 
-        fun findProjectsByItemId(itemId: Int): List<Project> =
-                projectItemRepository.findByItemId(itemId.toLong()).map {
+        fun findProjectsByItemId(itemId: UUID): List<Project> =
+                projectItemRepository.findByItemId(itemId).map {
                         it.project?.toProjectGraphQLType()
                                 ?: throw IllegalStateException("Project not found")
                 }
-        fun findByProjectIdAndItemId(projectId: Int, itemId: Int): ProjectItem =
-                projectItemRepository
-                        .findByProjectIdAndItemId(projectId.toLong(), itemId.toLong())
-                        ?.toGraphQLType()
+        fun findByProjectIdAndItemId(projectId: UUID, itemId: UUID): ProjectItem =
+                projectItemRepository.findByProjectIdAndItemId(projectId, itemId)?.toGraphQLType()
                         ?: throw NoSuchElementException("Project item not found")
         fun search(searchTerm: String): List<ProjectItem> =
                 projectItemRepository
@@ -62,12 +61,12 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
         }
 
         fun findByProjectIdPaginated(
-                projectId: Int,
+                projectId: UUID,
                 page: Int = 0,
                 size: Int = 20
         ): ProjectItemPage {
                 val pageable = PageRequest.of(page, size)
-                val pageResult = projectItemRepository.findByProjectId(projectId.toLong(), pageable)
+                val pageResult = projectItemRepository.findByProjectId(projectId, pageable)
 
                 return ProjectItemPage(
                         content = pageResult.content.map { it.toGraphQLType() },
@@ -82,9 +81,9 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                 )
         }
 
-        fun findByItemIdPaginated(itemId: Int, page: Int = 0, size: Int = 20): ProjectItemPage {
+        fun findByItemIdPaginated(itemId: UUID, page: Int = 0, size: Int = 20): ProjectItemPage {
                 val pageable = PageRequest.of(page, size)
-                val pageResult = projectItemRepository.findByItemId(itemId.toLong(), pageable)
+                val pageResult = projectItemRepository.findByItemId(itemId, pageable)
 
                 return ProjectItemPage(
                         content = pageResult.content.map { it.toGraphQLType() },
@@ -100,10 +99,10 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
         }
 
         @Transactional
-        fun removeItemFromProject(id: Int): ProjectItemMutationResult {
+        fun removeItemFromProject(id: UUID): ProjectItemMutationResult {
                 return try {
                         val entity =
-                                projectItemRepository.findById(id.toLong()).orElseThrow {
+                                projectItemRepository.findById(id).orElseThrow {
                                         NoSuchElementException("Project item not found")
                                 }
                         projectItemRepository.delete(entity)
@@ -125,8 +124,8 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
         fun addItemToProject(input: ProjectItemInput): ProjectItemMutationResult {
                 val entity =
                         ProjectItemsEntity(
-                                projectId = input.projectId.toLong(),
-                                itemId = input.itemId.toLong(),
+                                projectId = input.projectId,
+                                itemId = input.itemId,
                                 quantityUsed = input.quantityUsed ?: 0
                         )
                 val savedProjectItem = projectItemRepository.save(entity).toGraphQLType()
@@ -137,9 +136,9 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                 )
         }
         @Transactional
-        fun updateProjectItem(id: Int, quantityUsed: Int): ProjectItemMutationResult {
+        fun updateProjectItem(id: UUID, quantityUsed: Int): ProjectItemMutationResult {
                 val entity =
-                        projectItemRepository.findById(id.toLong()).orElseThrow {
+                        projectItemRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Project item not found")
                         }
                 val updatedEntity = entity.copy(quantityUsed = quantityUsed)
@@ -151,13 +150,10 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                 )
         }
         @Transactional
-        fun removeItemFromProjectByIds(projectId: Int, itemId: Int): ProjectItemMutationResult {
+        fun removeItemFromProjectByIds(projectId: UUID, itemId: UUID): ProjectItemMutationResult {
                 return try {
                         val entity =
-                                projectItemRepository.findByProjectIdAndItemId(
-                                        projectId.toLong(),
-                                        itemId.toLong()
-                                )
+                                projectItemRepository.findByProjectIdAndItemId(projectId, itemId)
                                         ?: throw NoSuchElementException("Project item not found")
                         projectItemRepository.delete(entity)
                         ProjectItemMutationResult(
@@ -177,16 +173,16 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
 
 private fun ProjectItemsEntity.toGraphQLType(): ProjectItem =
         ProjectItem(
-                id = this.id.toInt(),
-                projectId = this.projectId.toInt(),
-                itemId = this.itemId.toInt(),
+                id = this.id!!,
+                projectId = this.projectId,
+                itemId = this.itemId,
                 quantityUsed = this.quantityUsed,
                 createdAt = this.createdAt.toString()
         )
 
 private fun ProjectsEntity.toProjectGraphQLType(): Project =
         Project(
-                id = this.id.toInt(),
+                id = this.id!!,
                 name = this.name,
                 description = this.description,
                 status = this.status,

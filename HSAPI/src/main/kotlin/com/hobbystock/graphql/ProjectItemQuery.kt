@@ -4,6 +4,7 @@ import com.hobbystock.services.ProjectItemService
 import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectItemPage
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
@@ -13,17 +14,17 @@ class ProjectItemQueryController
 @Autowired
 constructor(private val projectItemService: ProjectItemService) {
   @QueryMapping
-  fun projectItems(projectId: Int): List<ProjectItem> {
+  fun projectItems(projectId: UUID): List<ProjectItem> {
     return projectItemService.findByProjectId(projectId)
   }
 
   @QueryMapping
-  fun itemProjects(itemId: Int): List<Project> {
+  fun itemProjects(itemId: UUID): List<Project> {
     return projectItemService.findProjectsByItemId(itemId)
   }
 
   @QueryMapping
-  fun projectItem(projectId: Int, itemId: Int): ProjectItem {
+  fun projectItem(projectId: UUID, itemId: UUID): ProjectItem {
     return projectItemService.findByProjectIdAndItemId(projectId, itemId)
   }
 
@@ -40,7 +41,7 @@ constructor(private val projectItemService: ProjectItemService) {
 
   @QueryMapping
   fun projectItemsByProjectPaginated(
-          projectId: Int,
+          projectId: UUID,
           page: Int = 0,
           size: Int = 20
   ): ProjectItemPage {
@@ -48,7 +49,7 @@ constructor(private val projectItemService: ProjectItemService) {
   }
 
   @QueryMapping
-  fun projectItemsByItemPaginated(itemId: Int, page: Int = 0, size: Int = 20): ProjectItemPage {
+  fun projectItemsByItemPaginated(itemId: UUID, page: Int = 0, size: Int = 20): ProjectItemPage {
     return projectItemService.findByItemIdPaginated(itemId, page, size)
   }
 }
