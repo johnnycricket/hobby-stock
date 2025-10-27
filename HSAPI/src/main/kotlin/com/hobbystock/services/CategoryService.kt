@@ -15,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class CategoryService(private val categoryRepository: CategoryRepository) {
   fun findAll(): List<Category> = categoryRepository.findAll().map { it.toGraphQLType() }
 
-  fun findById(id: Int): Category? =
-          categoryRepository.findById(id.toLong()).orElse(null)?.toGraphQLType()
+  fun findById(id: Int): Category? = categoryRepository.findById(id).orElse(null)?.toGraphQLType()
 
   // Paginated methods
   fun findAllPaginated(page: Int = 0, size: Int = 20): CategoryPage {
@@ -50,7 +49,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
   @Transactional
   fun updateCategory(id: Int, category: CategoryInput): Category {
     val existing =
-            categoryRepository.findById(id.toLong()).orElseThrow {
+            categoryRepository.findById(id).orElseThrow {
               NoSuchElementException("Category not found")
             }
     val updatedEntity = existing.copy(name = category.name, description = category.description)
@@ -60,7 +59,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
   @Transactional
   fun deleteCategory(id: Int): MutationResult {
     return try {
-      categoryRepository.deleteById(id.toLong())
+      categoryRepository.deleteById(id)
       MutationResult(success = true, message = "Category deleted successfully")
     } catch (e: Exception) {
       MutationResult(success = false, message = "Category not found")

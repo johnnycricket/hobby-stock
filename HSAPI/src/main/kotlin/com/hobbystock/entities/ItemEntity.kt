@@ -14,8 +14,7 @@ data class ItemEntity(
         val id: UUID? = null,
         @Column(name = "name", nullable = false) val name: String,
         @Column(name = "description") val description: String? = null,
-        @Column(name = "category_id", nullable = false, insertable = false, updatable = false)
-        val categoryId: Int,
+        @Column(name = "category_id", nullable = false) val categoryId: Int,
         @Column(name = "quantity", nullable = false) val quantity: Int,
         @Column(name = "min_quantity") val minQuantity: Int?,
         @Column(name = "unit_price", precision = 10, scale = 2) val unitPrice: BigDecimal?,

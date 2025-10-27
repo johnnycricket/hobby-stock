@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProjectItemRepository : JpaRepository<ProjectItemsEntity, Long> {
+interface ProjectItemRepository : JpaRepository<ProjectItemsEntity, UUID> {
   fun findByProjectId(projectId: UUID): List<ProjectItemsEntity>
   fun findByItemId(itemId: UUID): List<ProjectItemsEntity>
   fun findByProjectIdAndItemId(projectId: UUID, itemId: UUID): ProjectItemsEntity?

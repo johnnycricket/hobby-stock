@@ -130,11 +130,18 @@ class ItemService(
                         "DEBUG: categoryId value: ${input.categoryId}, type: ${input.categoryId::class}"
                 )
 
+                // Convert string categoryId to integer
+                val categoryIdInt =
+                        input.categoryId.toIntOrNull()
+                                ?: throw IllegalArgumentException(
+                                        "Invalid categoryId: ${input.categoryId}"
+                                )
+
                 val entity =
                         ItemEntity(
                                 name = input.name,
                                 description = input.description,
-                                categoryId = input.categoryId,
+                                categoryId = categoryIdInt,
                                 quantity = input.quantity,
                                 minQuantity = input.minQuantity,
                                 unitPrice = input.unitPrice?.toBigDecimal(),
@@ -151,11 +158,19 @@ class ItemService(
                         itemRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Item not found")
                         }
+
+                // Convert string categoryId to integer
+                val categoryIdInt =
+                        input.categoryId.toIntOrNull()
+                                ?: throw IllegalArgumentException(
+                                        "Invalid categoryId: ${input.categoryId}"
+                                )
+
                 val updatedEntity =
                         existing.copy(
                                 name = input.name,
                                 description = input.description,
-                                categoryId = input.categoryId,
+                                categoryId = categoryIdInt,
                                 quantity = input.quantity,
                                 minQuantity = input.minQuantity,
                                 unitPrice = input.unitPrice?.toBigDecimal(),

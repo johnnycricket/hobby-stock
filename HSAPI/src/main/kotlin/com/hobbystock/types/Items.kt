@@ -20,7 +20,7 @@ data class Item(
 data class ItemInput(
         val name: String,
         val description: String?,
-        val categoryId: Int,
+        val categoryId: String,
         val quantity: Int,
         val minQuantity: Int?,
         val unitPrice: Float?,

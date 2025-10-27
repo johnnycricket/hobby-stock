@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProjectItemService(private val projectItemRepository: ProjectItemRepository) {
-
         fun findByProjectId(projectId: UUID): List<ProjectItem> =
                 projectItemRepository.findByProjectId(projectId).map { it.toGraphQLType() }
         fun findByItemId(itemId: UUID): List<ProjectItem> =
