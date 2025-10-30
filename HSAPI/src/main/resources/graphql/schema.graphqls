@@ -79,7 +79,7 @@ type Mutation {
   # items
   createItem(input: ItemInput!): ItemMutationResult!
   updateItem(id: String!, input: ItemUpdateInput!): ItemMutationResult!
-  deleteItem(id: String!): MutationResult!
+  deleteItem(id: String!): ItemMutationResult!
   adjustItemQuantity(id: String!, quantityChange: Int!): MutationResult!
   moveItem(id: String!, newLocation: String!): MutationResult!
 

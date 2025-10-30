@@ -4,6 +4,7 @@ import com.hobbystock.services.CategoryService
 import com.hobbystock.types.CategoryInput
 import com.hobbystock.types.CategoryMutationResult
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.stereotype.Controller
 
@@ -12,7 +13,7 @@ class CategoryMutationController
 @Autowired
 constructor(private val categoryService: CategoryService) {
     @MutationMapping
-    fun createCategory(input: CategoryInput): CategoryMutationResult {
+    fun createCategory(@Argument input: CategoryInput): CategoryMutationResult {
         return CategoryMutationResult(
                 success = true,
                 message = "Category created successfully",
@@ -21,7 +22,7 @@ constructor(private val categoryService: CategoryService) {
     }
 
     @MutationMapping
-    fun updateCategory(id: Int, input: CategoryInput): CategoryMutationResult {
+    fun updateCategory(@Argument id: Int, @Argument input: CategoryInput): CategoryMutationResult {
         return CategoryMutationResult(
                 success = true,
                 message = "Category updated successfully",
@@ -30,7 +31,7 @@ constructor(private val categoryService: CategoryService) {
     }
 
     @MutationMapping
-    fun deleteCategory(id: Int): CategoryMutationResult {
+    fun deleteCategory(@Argument id: Int): CategoryMutationResult {
         val deletedCategory = categoryService.findById(id) // Get before delete
         categoryService.deleteCategory(id)
         return CategoryMutationResult(

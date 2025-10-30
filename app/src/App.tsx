@@ -14,6 +14,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/inventory/new" element={<AddEditInventory />} />
+        <Route path="/inventory/:id" element={<AddEditInventory />} />
         <Route path="/test" element={<TestConnection />} />
       </Routes>
     </Layout>

@@ -5,6 +5,7 @@ import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectPage
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
 
@@ -16,34 +17,43 @@ class ProjectQueryController @Autowired constructor(private val projectService: 
   }
 
   @QueryMapping
-  fun project(id: UUID): Project {
-    return projectService.findById(id)
+  fun project(@Argument id: String): Project {
+    val uuid = UUID.fromString(id)
+    return projectService.findById(uuid)
             ?: throw NoSuchElementException("Project not found for id: $id")
   }
 
   @QueryMapping
-  fun projectsByStatus(status: String): List<Project> {
+  fun projectsByStatus(@Argument status: String): List<Project> {
     return projectService.findByStatus(status)
   }
 
   @QueryMapping
-  fun searchProjects(searchTerm: String): List<Project> {
+  fun searchProjects(@Argument searchTerm: String): List<Project> {
     return projectService.search(searchTerm)
   }
 
   // Paginated queries
   @QueryMapping
-  fun projectsPaginated(page: Int = 0, size: Int = 20): ProjectPage {
+  fun projectsPaginated(@Argument page: Int = 0, @Argument size: Int = 20): ProjectPage {
     return projectService.findAllPaginated(page, size)
   }
 
   @QueryMapping
-  fun projectsByStatusPaginated(status: String, page: Int = 0, size: Int = 20): ProjectPage {
+  fun projectsByStatusPaginated(
+          @Argument status: String,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
+  ): ProjectPage {
     return projectService.findByStatusPaginated(status, page, size)
   }
 
   @QueryMapping
-  fun searchProjectsPaginated(searchTerm: String, page: Int = 0, size: Int = 20): ProjectPage {
+  fun searchProjectsPaginated(
+          @Argument searchTerm: String,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
+  ): ProjectPage {
     return projectService.searchPaginated(searchTerm, page, size)
   }
 }

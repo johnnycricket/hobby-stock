@@ -23,16 +23,18 @@ class ItemMutationController @Autowired constructor(private val itemService: Ite
   }
 
   @MutationMapping
-  fun updateItem(@Argument id: UUID, @Argument input: ItemInput): ItemMutationResult {
+  fun updateItem(@Argument id: String, @Argument input: ItemInput): ItemMutationResult {
+    val uuid = UUID.fromString(id)
     return ItemMutationResult(
             success = true,
             message = "Item updated successfully",
-            item = itemService.updateItem(id, input)
+            item = itemService.updateItem(uuid, input)
     )
   }
 
   @MutationMapping
-  fun deleteItem(@Argument id: UUID): ItemMutationResult {
-    return itemService.deleteItem(id)
+  fun deleteItem(@Argument id: String): ItemMutationResult {
+    val uuid = UUID.fromString(id)
+    return itemService.deleteItem(uuid)
   }
 }

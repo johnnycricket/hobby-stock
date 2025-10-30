@@ -25,3 +25,9 @@ export type ItemInput = {
   location: string;
   notes?: string;
 };
+
+export namespace Item {
+  export function is(item: any): item is Item {
+    return item && typeof item === "object" && "id" in item;
+  }
+}

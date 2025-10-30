@@ -18,17 +18,21 @@ constructor(private val projectItemService: ProjectItemService) {
   }
 
   @MutationMapping
-  fun removeItemFromProject(id: UUID): ProjectItemMutationResult {
-    return projectItemService.removeItemFromProject(id)
+  fun removeItemFromProject(id: String): ProjectItemMutationResult {
+    val uuid = UUID.fromString(id)
+    return projectItemService.removeItemFromProject(uuid)
   }
 
   @MutationMapping
-  fun updateProjectItem(id: UUID, quantityUsed: Int): ProjectItemMutationResult {
-    return projectItemService.updateProjectItem(id, quantityUsed)
+  fun updateProjectItem(id: String, quantityUsed: Int): ProjectItemMutationResult {
+    val uuid = UUID.fromString(id)
+    return projectItemService.updateProjectItem(uuid, quantityUsed)
   }
 
   @MutationMapping
-  fun removeItemFromProjectByIds(projectId: UUID, itemId: UUID): ProjectItemMutationResult {
-    return projectItemService.removeItemFromProjectByIds(projectId, itemId)
+  fun removeItemFromProjectByIds(projectId: String, itemId: String): ProjectItemMutationResult {
+    val projectUuid = UUID.fromString(projectId)
+    val itemUuid = UUID.fromString(itemId)
+    return projectItemService.removeItemFromProjectByIds(projectUuid, itemUuid)
   }
 }

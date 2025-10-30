@@ -20,26 +20,30 @@ class ProjectMutationController @Autowired constructor(private val projectServic
   }
 
   @MutationMapping
-  fun updateProject(id: UUID, input: ProjectInput): ProjectMutationResult {
+  fun updateProject(id: String, input: ProjectInput): ProjectMutationResult {
+    val uuid = UUID.fromString(id)
     return ProjectMutationResult(
             success = true,
             message = "Project updated successfully",
-            project = projectService.updateProject(id, input)
+            project = projectService.updateProject(uuid, input)
     )
   }
 
   @MutationMapping
-  fun deleteProject(id: UUID): ProjectMutationResult {
-    return projectService.deleteProject(id)
+  fun deleteProject(id: String): ProjectMutationResult {
+    val uuid = UUID.fromString(id)
+    return projectService.deleteProject(uuid)
   }
 
   @MutationMapping
-  fun updateProjectStatus(id: UUID, status: String): ProjectMutationResult {
-    return projectService.updateProjectStatus(id, status)
+  fun updateProjectStatus(id: String, status: String): ProjectMutationResult {
+    val uuid = UUID.fromString(id)
+    return projectService.updateProjectStatus(uuid, status)
   }
 
   @MutationMapping
-  fun completeProject(id: UUID, endDate: String?): ProjectMutationResult {
-    return projectService.completeProject(id, endDate)
+  fun completeProject(id: String, endDate: String?): ProjectMutationResult {
+    val uuid = UUID.fromString(id)
+    return projectService.completeProject(uuid, endDate)
   }
 }

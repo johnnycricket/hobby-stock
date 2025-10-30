@@ -30,14 +30,33 @@ export namespace ItemService {
     return await response.json();
   };
 
-  export const findById = async (id: number) => {
+  export const findById = async (id: string) => {
     const response = await fetch("/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { item(id: ${id}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { item(id: "${id}") { 
+            id 
+            name 
+            description 
+            categoryId 
+            quantity 
+            minQuantity 
+            unitPrice 
+            location 
+            notes 
+            createdAt 
+            updatedAt 
+            category 
+            { 
+              id 
+              name 
+              description 
+            } 
+          }    
+        }`,
       }),
     });
     if (!response.ok) {
@@ -89,7 +108,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByLocation(location: ${location}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { itemsByLocation(location: "${location}") { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
       }),
     });
     if (!response.ok) {
@@ -109,7 +128,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByLocationPaginated(location: ${location}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { itemsByLocationPaginated(location: "${location}", page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -160,7 +179,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { searchItems(searchTerm: ${searchTerm}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { searchItems(searchTerm: "${searchTerm}") { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
       }),
     });
     if (!response.ok) {
@@ -180,7 +199,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { searchItemsPaginated(searchTerm: ${searchTerm}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { searchItemsPaginated(searchTerm: "${searchTerm}", page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -238,9 +257,34 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { updateItem(id: ${id}, input: ${JSON.stringify(
-          item
-        )}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `mutation UpdateItem($id: String!, $input: ItemUpdateInput!) {
+          updateItem(id: $id, input: $input) {
+            success
+            message
+            item {
+              id 
+              name 
+              description 
+              categoryId 
+              quantity 
+              minQuantity 
+              unitPrice 
+              location 
+              notes 
+              createdAt 
+              updatedAt 
+              category { 
+                id 
+                name 
+                description 
+              } 
+            } 
+          } 
+        }`,
+        variables: {
+          id: id,
+          input: item,
+        },
       }),
     });
     if (!response.ok) {
@@ -249,14 +293,40 @@ export namespace ItemService {
     return await response.json();
   };
 
-  export const deleteItem = async (id: number) => {
+  export const deleteItem = async (id: string) => {
     const response = await fetch("/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { deleteItem(id: ${id}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `mutation DeleteItem($id: String!) {
+          deleteItem(id: $id) {
+            success
+            message
+            item {
+              id
+              name
+              description
+              categoryId
+              quantity
+              minQuantity
+              unitPrice
+              location
+              notes
+              createdAt
+              updatedAt
+              category {
+                id
+                name
+                description
+              }
+            }
+          }
+        }`,
+        variables: {
+          id: id,
+        },
       }),
     });
     if (!response.ok) {

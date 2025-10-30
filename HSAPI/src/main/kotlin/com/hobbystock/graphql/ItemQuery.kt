@@ -17,17 +17,18 @@ class ItemQueryController @Autowired constructor(private val itemService: ItemSe
   }
 
   @QueryMapping
-  fun item(id: UUID): Item {
-    return itemService.findById(id) ?: throw NoSuchElementException("Item not found for id: $id")
+  fun item(@Argument id: String): Item {
+    val uuid = UUID.fromString(id)
+    return itemService.findById(uuid) ?: throw NoSuchElementException("Item not found for id: $id")
   }
 
   @QueryMapping
-  fun itemsByCategory(categoryId: Int): List<Item> {
+  fun itemsByCategory(@Argument categoryId: Int): List<Item> {
     return itemService.findByCategoryId(categoryId)
   }
 
   @QueryMapping
-  fun itemsByLocation(location: String): List<Item> {
+  fun itemsByLocation(@Argument location: String): List<Item> {
     return itemService.findByLocation(location)
   }
 
@@ -37,7 +38,7 @@ class ItemQueryController @Autowired constructor(private val itemService: ItemSe
   }
 
   @QueryMapping
-  fun searchItems(searchTerm: String): List<Item> {
+  fun searchItems(@Argument searchTerm: String): List<Item> {
     return itemService.search(searchTerm)
   }
 
@@ -48,22 +49,34 @@ class ItemQueryController @Autowired constructor(private val itemService: ItemSe
   }
 
   @QueryMapping
-  fun itemsByCategoryPaginated(categoryId: Int, page: Int = 0, size: Int = 20): ItemPage {
+  fun itemsByCategoryPaginated(
+          @Argument categoryId: Int,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
+  ): ItemPage {
     return itemService.findByCategoryIdPaginated(categoryId, page, size)
   }
 
   @QueryMapping
-  fun itemsByLocationPaginated(location: String, page: Int = 0, size: Int = 20): ItemPage {
+  fun itemsByLocationPaginated(
+          @Argument location: String,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
+  ): ItemPage {
     return itemService.findByLocationPaginated(location, page, size)
   }
 
   @QueryMapping
-  fun lowStockItemsPaginated(page: Int = 0, size: Int = 20): ItemPage {
+  fun lowStockItemsPaginated(@Argument page: Int = 0, @Argument size: Int = 20): ItemPage {
     return itemService.findLowStockItemsPaginated(page, size)
   }
 
   @QueryMapping
-  fun searchItemsPaginated(searchTerm: String, page: Int = 0, size: Int = 20): ItemPage {
+  fun searchItemsPaginated(
+          @Argument searchTerm: String,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
+  ): ItemPage {
     return itemService.searchPaginated(searchTerm, page, size)
   }
 }

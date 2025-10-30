@@ -6,6 +6,7 @@ import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectItemPage
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.stereotype.Controller
 
@@ -14,42 +15,52 @@ class ProjectItemQueryController
 @Autowired
 constructor(private val projectItemService: ProjectItemService) {
   @QueryMapping
-  fun projectItems(projectId: UUID): List<ProjectItem> {
-    return projectItemService.findByProjectId(projectId)
+  fun projectItems(@Argument projectId: String): List<ProjectItem> {
+    val uuid = UUID.fromString(projectId)
+    return projectItemService.findByProjectId(uuid)
   }
 
   @QueryMapping
-  fun itemProjects(itemId: UUID): List<Project> {
-    return projectItemService.findProjectsByItemId(itemId)
+  fun itemProjects(@Argument itemId: String): List<Project> {
+    val uuid = UUID.fromString(itemId)
+    return projectItemService.findProjectsByItemId(uuid)
   }
 
   @QueryMapping
-  fun projectItem(projectId: UUID, itemId: UUID): ProjectItem {
-    return projectItemService.findByProjectIdAndItemId(projectId, itemId)
+  fun projectItem(@Argument projectId: String, @Argument itemId: String): ProjectItem {
+    val projectUuid = UUID.fromString(projectId)
+    val itemUuid = UUID.fromString(itemId)
+    return projectItemService.findByProjectIdAndItemId(projectUuid, itemUuid)
   }
 
   @QueryMapping
-  fun searchProjectItems(searchTerm: String): List<ProjectItem> {
+  fun searchProjectItems(@Argument searchTerm: String): List<ProjectItem> {
     return projectItemService.search(searchTerm)
   }
 
   // Paginated queries
   @QueryMapping
-  fun projectItemsPaginated(page: Int = 0, size: Int = 20): ProjectItemPage {
+  fun projectItemsPaginated(@Argument page: Int = 0, @Argument size: Int = 20): ProjectItemPage {
     return projectItemService.findAllPaginated(page, size)
   }
 
   @QueryMapping
   fun projectItemsByProjectPaginated(
-          projectId: UUID,
-          page: Int = 0,
-          size: Int = 20
+          @Argument projectId: String,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
   ): ProjectItemPage {
-    return projectItemService.findByProjectIdPaginated(projectId, page, size)
+    val uuid = UUID.fromString(projectId)
+    return projectItemService.findByProjectIdPaginated(uuid, page, size)
   }
 
   @QueryMapping
-  fun projectItemsByItemPaginated(itemId: UUID, page: Int = 0, size: Int = 20): ProjectItemPage {
-    return projectItemService.findByItemIdPaginated(itemId, page, size)
+  fun projectItemsByItemPaginated(
+          @Argument itemId: String,
+          @Argument page: Int = 0,
+          @Argument size: Int = 20
+  ): ProjectItemPage {
+    val uuid = UUID.fromString(itemId)
+    return projectItemService.findByItemIdPaginated(uuid, page, size)
   }
 }

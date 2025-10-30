@@ -1,32 +1,49 @@
 import { Item } from "@/types/Item";
 import { useEffect, useState } from "react";
 import { ItemService } from "@/services/item-service";
+import { Quantity } from "@/components/inventory/quantity";
+import { InventoryItemCard } from "@/components/inventory/InventoryItemCard";
+import { useNavigate } from "react-router-dom";
 
 export function Inventory() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  const fetchItems = async () => {
+    try {
+      const response = await ItemService.findAllPaginated(page, size);
+      if (response.errors) {
+        setError(response.errors[0].message);
+        setLoading(false);
+        return;
+      }
+      console.log(JSON.stringify(response, null, 2));
+      setItems(response.data.itemsPaginated.content);
+      setPage(response.data.itemsPaginated.pageInfo.currentPage);
+      setTotal(response.data.itemsPaginated.pageInfo.totalElements);
+      setLoading(false);
+    } catch (error: any) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await ItemService.findAllPaginated(page, size);
-        if (response.errors) {
-          setError(response.errors[0].message);
-          setLoading(false);
-          return;
-        }
-        setItems(response.items);
-        setLoading(false);
-      } catch (error: any) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
     fetchItems();
   }, [page, size]);
+
+  const deleteItem = async (id: string) => {
+    const response = await ItemService.deleteItem(id);
+    if (response.errors) {
+      setError(response.errors[0].message);
+    }
+    fetchItems();
+  };
 
   return (
     <div className="px-4 py-6 sm:px-0">
@@ -53,11 +70,14 @@ export function Inventory() {
             {items &&
               items.length > 0 &&
               items.map((item) => (
-                <div key={item.id} className="card">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {item.name}
-                  </h3>
-                  <p className="text-gray-600">{item.description}</p>
+                <div key={item.id}>
+                  <InventoryItemCard
+                    item={item}
+                    onEdit={(id) => {
+                      navigate(`/inventory/${id}`);
+                    }}
+                    onDelete={(id) => deleteItem(id)}
+                  />
                 </div>
               ))}
           </div>
