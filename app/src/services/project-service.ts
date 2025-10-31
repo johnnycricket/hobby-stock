@@ -7,6 +7,9 @@ export namespace ProjectService {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        query: `query { projectsPaginated(page: ${page}, size: ${size}) { content { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+      }),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -100,14 +103,39 @@ export namespace ProjectService {
     return await response.json();
   };
 
-  export const deleteProject = async (id: number) => {
+  export const deleteProject = async (id: string) => {
     const response = await fetch("/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { deleteProject(id: ${id}) { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } } }`,
+        query: `mutation DeleteProject($id: String!) { 
+          deleteProject(id: $id) { 
+            success 
+            message 
+            project { 
+              id 
+              name 
+              description 
+              status 
+              startDate 
+              endDate 
+              createdAt 
+              updatedAt 
+              items { 
+                id 
+                projectId 
+                itemId 
+                quantityUsed 
+                createdAt 
+              } 
+            } 
+          } 
+        }`,
+        variables: {
+          id: id,
+        },
       }),
     });
     if (!response.ok) {

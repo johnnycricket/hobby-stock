@@ -1,7 +1,6 @@
 import { Item } from "@/types/Item";
 import { useEffect, useState } from "react";
 import { ItemService } from "@/services/item-service";
-import { Quantity } from "@/components/inventory/quantity";
 import { InventoryItemCard } from "@/components/inventory/InventoryItemCard";
 import { useNavigate } from "react-router-dom";
 

@@ -5,6 +5,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Inventory } from "./pages/Inventory";
 import { TestConnection } from "./pages/TestConnection";
 import { AddEditInventory } from "./pages/AddEditInventory";
+import { Projects } from "./pages/Projects";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/inventory/new" element={<AddEditInventory />} />
         <Route path="/inventory/:id" element={<AddEditInventory />} />
+        <Route path="/projects" element={<Projects />} />
         <Route path="/test" element={<TestConnection />} />
       </Routes>
     </Layout>
