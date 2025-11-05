@@ -1,11 +1,14 @@
 import { Project } from "@/types/Project";
 import { Pencil, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function ProjectCard({ project, onEdit, onDelete }: ProjectCard.Props) {
   return (
     <div className="card">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">{project.name}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          <Link to={`/projects/${project.id}`}>{project.name}</Link>
+        </h3>
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(project.id.toString())}

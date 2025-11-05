@@ -17,9 +17,33 @@ export namespace ProjectService {
     return await response.json();
   };
 
-  export const findById = async (id: number) => {
+  export const findById = async (id: string) => {
     const response = await fetch("/graphql", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `query { 
+          project(id: "${id}") { 
+            id 
+            name 
+            description 
+            status 
+            startDate 
+            endDate 
+            createdAt 
+            updatedAt 
+            items { 
+              id 
+              projectId 
+              itemId 
+              quantityUsed 
+              createdAt 
+            } 
+          }    
+        }`,
+      }),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
