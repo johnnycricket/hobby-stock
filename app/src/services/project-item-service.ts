@@ -56,8 +56,8 @@ export namespace ProjectItemService {
   };
 
   export const addItemToProject = async (
-    projectId: number,
-    itemId: number,
+    projectId: string,
+    itemId: string,
     quantityUsed: number
   ) => {
     const response = await fetch("/graphql", {
@@ -66,7 +66,19 @@ export namespace ProjectItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { addItemToProject(projectId: ${projectId}, itemId: ${itemId}, quantityUsed: ${quantityUsed}) { id projectId itemId quantityUsed createdAt } }`,
+        query: `mutation AddItemToProject($input: ProjectItemInput!) {
+          addItemToProject(input: $input) {
+            success
+            message
+          }
+        }`,
+        variables: {
+          input: {
+            projectId: projectId,
+            itemId: itemId,
+            quantityUsed: quantityUsed,
+          },
+        },
       }),
     });
     if (!response.ok) {
@@ -108,8 +120,8 @@ export namespace ProjectItemService {
   };
 
   export const removeItemFromProjectByIds = async (
-    projectId: number,
-    itemId: number
+    projectId: string,
+    itemId: string
   ) => {
     const response = await fetch("/graphql", {
       method: "POST",
@@ -117,7 +129,16 @@ export namespace ProjectItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { removeItemFromProjectByIds(projectId: ${projectId}, itemId: ${itemId}) { id projectId itemId quantityUsed createdAt } }`,
+        query: `mutation RemoveItemFromProjectByIds($projectId: String!, $itemId: String!) {
+          removeItemFromProjectByIds(projectId: $projectId, itemId: $itemId) {
+            success
+            message
+          }
+        }`,
+        variables: {
+          projectId: projectId,
+          itemId: itemId,
+        },
       }),
     });
     if (!response.ok) {

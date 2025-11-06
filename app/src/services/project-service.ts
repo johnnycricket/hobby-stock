@@ -98,9 +98,32 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { createProject(input: ${JSON.stringify(
-          project
-        )}) { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } } }`,
+        query: `mutation CreateProject($input: ProjectInput!) {
+          createProject(input: $input) {
+            success
+            message
+            project {
+              id
+              name
+              description
+              status
+              startDate
+              endDate
+              createdAt
+              updatedAt
+              items {
+                id
+                projectId
+                itemId
+                quantityUsed
+                createdAt
+              }
+            }
+          }
+        }`,
+        variables: {
+          input: project,
+        },
       }),
     });
     if (!response.ok) {
@@ -109,16 +132,40 @@ export namespace ProjectService {
     return await response.json();
   };
 
-  export const updateProject = async (id: number, project: ProjectInput) => {
+  export const updateProject = async (id: string, project: ProjectInput) => {
     const response = await fetch("/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { updateProject(id: ${id}, input: ${JSON.stringify(
-          project
-        )}) { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } } }`,
+        query: `mutation UpdateProject($id: String!, $input: ProjectInput!) {
+          updateProject(id: $id, input: $input) {
+            success
+            message
+            project {
+              id
+              name
+              description
+              status
+              startDate
+              endDate
+              createdAt
+              updatedAt
+              items {
+                id
+                projectId
+                itemId
+                quantityUsed
+                createdAt
+              }
+            }
+          }
+        }`,
+        variables: {
+          id: id,
+          input: project,
+        },
       }),
     });
     if (!response.ok) {

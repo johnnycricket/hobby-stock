@@ -7,6 +7,28 @@ export namespace ItemService {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        query: `query { 
+          items { 
+            id 
+            name 
+            description 
+            categoryId 
+            quantity 
+            minQuantity 
+            unitPrice 
+            location 
+            notes 
+            createdAt 
+            updatedAt 
+            category { 
+              id 
+              name 
+              description 
+            } 
+          }    
+        }`,
+      }),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
