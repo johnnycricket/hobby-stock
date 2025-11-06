@@ -3,6 +3,7 @@ import { Project } from "@/types/Project";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 export function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +11,7 @@ export function ProjectDetails() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchProject = async (projectId: string) => {
     try {
@@ -34,25 +36,29 @@ export function ProjectDetails() {
     }
   }, [id]);
 
-  const handleDelete = async () => {
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     if (!id) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${project?.name}"? This action cannot be undone.`
-    );
-
-    if (confirmed) {
-      try {
-        const response = await ProjectService.deleteProject(id);
-        if (response.errors) {
-          setError(response.errors[0].message);
-          return;
-        }
-        navigate("/projects");
-      } catch (error: any) {
-        setError(error.message);
+    try {
+      const response = await ProjectService.deleteProject(id);
+      if (response.errors) {
+        setError(response.errors[0].message);
+        setShowDeleteModal(false);
+        return;
       }
+      navigate("/projects");
+    } catch (error: any) {
+      setError(error.message);
+      setShowDeleteModal(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
   };
 
   const handleEdit = () => {
@@ -110,7 +116,7 @@ export function ProjectDetails() {
               <Pencil className="w-5 h-5" />
             </button>
             <button
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               aria-label="Delete"
               className="p-2 rounded hover:bg-gray-100 transition-colors text-red-600"
             >
@@ -173,6 +179,16 @@ export function ProjectDetails() {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete Project"
+        message={`Are you sure you want to delete "${project?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </div>
   );
 }

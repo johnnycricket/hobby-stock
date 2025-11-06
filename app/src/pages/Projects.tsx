@@ -68,7 +68,7 @@ export function Projects() {
               key={project.id}
               project={project}
               onEdit={(id) => {
-                navigate(`/projects/${id}`);
+                navigate(`/projects/${id}/edit`);
               }}
               onDelete={(id) => deleteProject(id)}
             />
