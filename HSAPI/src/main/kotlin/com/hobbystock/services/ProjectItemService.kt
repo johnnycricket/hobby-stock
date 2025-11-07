@@ -6,7 +6,6 @@ import com.hobbystock.repositories.ProjectItemRepository
 import com.hobbystock.types.PageInfo
 import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectItem
-import com.hobbystock.types.ProjectItemInput
 import com.hobbystock.types.ProjectItemMutationResult
 import com.hobbystock.types.ProjectItemPage
 import java.util.UUID
@@ -120,19 +119,42 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
         }
 
         @Transactional
-        fun addItemToProject(input: ProjectItemInput): ProjectItemMutationResult {
-                val entity =
-                        ProjectItemsEntity(
-                                projectId = input.projectId,
-                                itemId = input.itemId,
-                                quantityUsed = input.quantityUsed ?: 0
+        fun addItemToProject(
+                projectId: UUID,
+                itemId: UUID,
+                quantityUsed: Int?
+        ): ProjectItemMutationResult {
+                try {
+                        // Check if the item is already in the project (UNIQUE constraint)
+                        val existing =
+                                projectItemRepository.findByProjectIdAndItemId(projectId, itemId)
+                        if (existing != null) {
+                                return ProjectItemMutationResult(
+                                        success = false,
+                                        message = "Item is already in this project",
+                                        projectItem = existing.toGraphQLType()
+                                )
+                        }
+
+                        val entity =
+                                ProjectItemsEntity(
+                                        projectId = projectId,
+                                        itemId = itemId,
+                                        quantityUsed = quantityUsed ?: 0
+                                )
+                        val savedProjectItem = projectItemRepository.save(entity).toGraphQLType()
+                        return ProjectItemMutationResult(
+                                success = true,
+                                message = "Item added to project successfully",
+                                projectItem = savedProjectItem
                         )
-                val savedProjectItem = projectItemRepository.save(entity).toGraphQLType()
-                return ProjectItemMutationResult(
-                        success = true,
-                        message = "Item added to project successfully",
-                        projectItem = savedProjectItem
-                )
+                } catch (e: Exception) {
+                        return ProjectItemMutationResult(
+                                success = false,
+                                message = "Failed to add item to project: ${e.message}",
+                                projectItem = null
+                        )
+                }
         }
         @Transactional
         fun updateProjectItem(id: UUID, quantityUsed: Int): ProjectItemMutationResult {

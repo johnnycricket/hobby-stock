@@ -10,7 +10,7 @@ data class ProjectItem(
         val createdAt: String
 )
 
-data class ProjectItemInput(val projectId: UUID, val itemId: UUID, val quantityUsed: Int?)
+data class ProjectItemInput(val projectId: String, val itemId: String, val quantityUsed: Int?)
 
 data class ProjectItemMutationResult(
         val success: Boolean,

@@ -1,16 +1,22 @@
 package com.hobbystock.graphql
 
+import com.hobbystock.services.ProjectItemService
 import com.hobbystock.services.ProjectService
 import com.hobbystock.types.Project
+import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectPage
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
+import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
 
 @Controller
-class ProjectQueryController @Autowired constructor(private val projectService: ProjectService) {
+class ProjectQueryController @Autowired constructor(
+    private val projectService: ProjectService,
+    private val projectItemService: ProjectItemService
+) {
   @QueryMapping
   fun projects(): List<Project> {
     return projectService.findAll()
@@ -55,5 +61,11 @@ class ProjectQueryController @Autowired constructor(private val projectService: 
           @Argument size: Int = 20
   ): ProjectPage {
     return projectService.searchPaginated(searchTerm, page, size)
+  }
+
+  @SchemaMapping(typeName = "Project", field = "items")
+  fun items(project: Project): List<ProjectItem> {
+    val projectUuid = project.id
+    return projectItemService.findByProjectId(projectUuid)
   }
 }

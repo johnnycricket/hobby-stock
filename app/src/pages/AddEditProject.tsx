@@ -71,6 +71,7 @@ export function AddEditProject() {
             project={project || undefined}
             items={items}
             projectItems={projectItems}
+            onProjectItemsChange={id ? () => fetchProject(id) : undefined}
           />
         )}
         {loading && (

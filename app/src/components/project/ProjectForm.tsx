@@ -24,12 +24,14 @@ type ProjectFormProps = {
   project?: Project;
   items: Item[];
   projectItems: ProjectItem[];
+  onProjectItemsChange?: () => void;
 };
 
 export const ProjectForm = ({
   project,
   items,
   projectItems: initialProjectItems,
+  onProjectItemsChange,
 }: ProjectFormProps) => {
   const navigate = useNavigate();
   const isEditing = useMemo(() => project !== undefined, [project]);
@@ -57,9 +59,13 @@ export const ProjectForm = ({
         description: project.description || "",
         status: project.status || "PLANNING",
       });
-      setProjectItems(project.items || []);
     }
   }, [project, methods]);
+
+  // Update projectItems when prop changes (e.g., after refetch)
+  useEffect(() => {
+    setProjectItems(initialProjectItems || []);
+  }, [initialProjectItems]);
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     const projectData: ProjectInput = {
@@ -144,27 +150,50 @@ export const ProjectForm = ({
     }
 
     try {
+      // Ensure IDs are strings (UUIDs from backend)
+      // GraphQL schema returns IDs as strings (UUIDs), even if TypeScript types say number
+      const projectId = String(project.id);
+      const itemId = selectedItemId; // Already a string from select
+
+      // Validate that we have valid IDs
+      if (!projectId || !itemId) {
+        setError("Project ID and Item ID are required");
+        return;
+      }
+
       const response = await ProjectItemService.addItemToProject(
-        project.id.toString(),
-        selectedItemId,
+        projectId,
+        itemId,
         quantity
       );
       if (response.errors) {
+        console.error("GraphQL errors:", response.errors);
         setError(response.errors[0].message);
         return;
       }
+      if (!response.data || !response.data.addItemToProject) {
+        console.error("Unexpected response structure:", response);
+        setError("Unexpected response from server");
+        return;
+      }
       if (response.data.addItemToProject.success) {
-        // Refresh project items - for now just add to local state
-        // In a real app, you'd refetch from the server
-        const newProjectItem: ProjectItem = {
-          id: Date.now(), // Temporary ID
-          projectId:
-            typeof project.id === "string" ? parseInt(project.id) : project.id,
-          itemId: parseInt(selectedItemId),
-          quantityUsed: quantity,
-          createdAt: new Date().toISOString(),
-        };
-        setProjectItems([...projectItems, newProjectItem]);
+        // Refetch project items from server to get the actual saved data
+        if (onProjectItemsChange) {
+          onProjectItemsChange();
+        } else {
+          // Fallback: add to local state if no callback provided
+          const newProjectItem: ProjectItem = {
+            id: Date.now(), // Temporary ID
+            projectId:
+              typeof project.id === "string"
+                ? parseInt(project.id)
+                : project.id,
+            itemId: parseInt(selectedItemId),
+            quantityUsed: quantity,
+            createdAt: new Date().toISOString(),
+          };
+          setProjectItems([...projectItems, newProjectItem]);
+        }
         setSelectedItemId("");
         setQuantityUsed("1");
         setError(null);
@@ -174,6 +203,7 @@ export const ProjectForm = ({
         );
       }
     } catch (error: any) {
+      console.error("Error adding item to project:", error);
       setError(error.message || "An error occurred");
     }
   };
@@ -182,18 +212,29 @@ export const ProjectForm = ({
     if (!project) return;
 
     try {
+      // Ensure IDs are strings (UUIDs from backend)
+      const projectId =
+        typeof project.id === "string" ? project.id : String(project.id);
+      const itemIdStr = String(itemId);
+
       const response = await ProjectItemService.removeItemFromProjectByIds(
-        project.id.toString(),
-        itemId.toString()
+        projectId,
+        itemIdStr
       );
       if (response.errors) {
         setError(response.errors[0].message);
         return;
       }
       if (response.data.removeItemFromProjectByIds.success) {
-        setProjectItems(
-          projectItems.filter((item) => item.id !== projectItemId)
-        );
+        // Refetch project items from server to get the actual saved data
+        if (onProjectItemsChange) {
+          onProjectItemsChange();
+        } else {
+          // Fallback: update local state if no callback provided
+          setProjectItems(
+            projectItems.filter((item) => item.id !== projectItemId)
+          );
+        }
         setError(null);
       } else {
         setError(
