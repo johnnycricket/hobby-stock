@@ -80,7 +80,7 @@ type Mutation {
   createItem(input: ItemInput!): ItemMutationResult!
   updateItem(id: String!, input: ItemUpdateInput!): ItemMutationResult!
   deleteItem(id: String!): ItemMutationResult!
-  adjustItemQuantity(id: String!, quantityChange: Int!): MutationResult!
+  adjustItemQuantity(id: String!, quantityChange: Float!): MutationResult!
   moveItem(id: String!, newLocation: String!): MutationResult!
 
   # projects
@@ -92,7 +92,7 @@ type Mutation {
 
   # project-item relationships
   addItemToProject(input: ProjectItemInput!): MutationResult!
-  updateProjectItem(id: String!, quantityUsed: Int!): MutationResult!
+  updateProjectItem(id: String!, quantityUsed: Float!): MutationResult!
   removeItemFromProject(id: String!): MutationResult!
   removeItemFromProjectByIds(
     projectId: String!
@@ -110,9 +110,10 @@ input ItemInput {
   name: String!
   description: String
   categoryId: String!
-  quantity: Int!
-  minQuantity: Int
+  quantity: Float!
+  minQuantity: Float
   unitPrice: Float
+  amountType: AmountType
   location: String!
   notes: String
 }
@@ -128,7 +129,7 @@ input ProjectInput {
 input ProjectItemInput {
   projectId: String!
   itemId: String!
-  quantityUsed: Int!
+  quantityUsed: Float!
   item: ItemInput
 }
 
@@ -136,9 +137,10 @@ input ItemUpdateInput {
   name: String
   description: String
   categoryId: Int
-  quantity: Int
-  minQuantity: Int
+  quantity: Float
+  minQuantity: Float
   unitPrice: Float
+  amountType: AmountType
   location: String
   notes: String
 }
@@ -161,6 +163,13 @@ type ProjectMutationResult {
   project: Project
 }
 
+# Enums
+enum AmountType {
+  PERCENT
+  COUNT
+  VOLUME
+}
+
 # type types
 type Category {
   id: Int!
@@ -173,9 +182,10 @@ type Item {
   name: String!
   description: String
   categoryId: Int!
-  quantity: Int!
-  minQuantity: Int
+  quantity: Float!
+  minQuantity: Float
   unitPrice: Float
+  amountType: AmountType!
   location: String!
   notes: String
   createdAt: String!
@@ -199,7 +209,7 @@ type ProjectItem {
   id: String!
   projectId: String!
   itemId: String!
-  quantityUsed: Int
+  quantityUsed: Float
   createdAt: String!
 }
 

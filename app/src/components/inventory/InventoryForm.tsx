@@ -1,4 +1,4 @@
-import { Item, ItemInput } from "@/types/Item";
+import { Item, ItemInput, AmountType } from "@/types/Item";
 import { useMemo, useState, useEffect } from "react";
 import {
   FieldErrors,
@@ -18,6 +18,7 @@ type FormData = {
   quantity: string;
   minQuantity?: string;
   unitPrice?: string;
+  amountType: string;
   location: string;
   notes?: string;
 };
@@ -40,6 +41,7 @@ export const InventoryForm = ({ item, categories }: InventoryFormProps) => {
       quantity: item?.quantity?.toString() || "",
       minQuantity: item?.minQuantity?.toString() || "",
       unitPrice: item?.unitPrice?.toString() || "",
+      amountType: item && Item.is(item) ? item.amountType : AmountType.COUNT,
       location: item?.location || "",
       notes: item?.notes || "",
     },
@@ -56,6 +58,7 @@ export const InventoryForm = ({ item, categories }: InventoryFormProps) => {
         quantity: item.quantity?.toString() || "",
         minQuantity: item.minQuantity?.toString() || "",
         unitPrice: item.unitPrice?.toString() || "",
+        amountType: item.amountType || AmountType.COUNT,
         location: item.location || "",
         notes: item.notes || "",
       });
@@ -69,9 +72,10 @@ export const InventoryForm = ({ item, categories }: InventoryFormProps) => {
       name: data.name,
       description: data.description,
       categoryId: parseInt(data.categoryId),
-      quantity: parseInt(data.quantity),
-      minQuantity: data.minQuantity ? parseInt(data.minQuantity) : undefined,
+      quantity: parseFloat(data.quantity),
+      minQuantity: data.minQuantity ? parseFloat(data.minQuantity) : undefined,
       unitPrice: data.unitPrice ? parseFloat(data.unitPrice) : undefined,
+      amountType: data.amountType as AmountType,
       location: data.location,
       notes: data.notes,
     };
@@ -182,9 +186,10 @@ export const InventoryForm = ({ item, categories }: InventoryFormProps) => {
           </label>
           <input
             type="number"
+            step="0.01"
             id="quantity"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            placeholder="1"
+            placeholder="1.00"
             {...methods.register("quantity", {
               required: "Quantity is required",
             })}
@@ -197,11 +202,29 @@ export const InventoryForm = ({ item, categories }: InventoryFormProps) => {
           </label>
           <input
             type="number"
+            step="0.01"
             id="minQuantity"
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            placeholder="1"
+            placeholder="1.00"
             {...methods.register("minQuantity", { required: true })}
           />
+          <label
+            htmlFor="amountType"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Amount Type
+          </label>
+          <select
+            id="amountType"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            {...methods.register("amountType", {
+              required: "Amount type is required",
+            })}
+          >
+            <option value={AmountType.COUNT}>Count</option>
+            <option value={AmountType.PERCENT}>Percent</option>
+            <option value={AmountType.VOLUME}>Volume</option>
+          </select>
           <label
             htmlFor="unitPrice"
             className="block text-sm font-medium text-gray-700"

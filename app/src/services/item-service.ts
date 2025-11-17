@@ -17,6 +17,7 @@ export namespace ItemService {
             quantity 
             minQuantity 
             unitPrice 
+            amountType
             location 
             notes 
             createdAt 
@@ -43,7 +44,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsPaginated(page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { itemsPaginated(page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -67,6 +68,7 @@ export namespace ItemService {
             quantity 
             minQuantity 
             unitPrice 
+            amountType
             location 
             notes 
             createdAt 
@@ -94,7 +96,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByCategory(categoryId: ${categoryId}) { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { itemsByCategory(categoryId: ${categoryId}) { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } }`,
       }),
     });
     if (!response.ok) {
@@ -114,7 +116,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByCategoryPaginated(categoryId: ${categoryId}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { itemsByCategoryPaginated(categoryId: ${categoryId}, page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -130,7 +132,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByLocation(location: "${location}") { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { itemsByLocation(location: "${location}") { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } }`,
       }),
     });
     if (!response.ok) {
@@ -150,7 +152,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { itemsByLocationPaginated(location: "${location}", page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { itemsByLocationPaginated(location: "${location}", page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -166,7 +168,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { lowStockItems { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { lowStockItems { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } }`,
       }),
     });
     if (!response.ok) {
@@ -185,7 +187,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { lowStockItemsPaginated(page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { lowStockItemsPaginated(page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -201,7 +203,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { searchItems(searchTerm: "${searchTerm}") { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } }`,
+        query: `query { searchItems(searchTerm: "${searchTerm}") { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } }`,
       }),
     });
     if (!response.ok) {
@@ -221,7 +223,7 @@ export namespace ItemService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { searchItemsPaginated(searchTerm: "${searchTerm}", page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { searchItemsPaginated(searchTerm: "${searchTerm}", page: ${page}, size: ${size}) { content { id name description categoryId quantity minQuantity unitPrice amountType location notes createdAt updatedAt category { id name description } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -249,6 +251,7 @@ export namespace ItemService {
               quantity
               minQuantity
               unitPrice
+              amountType
               location
               notes
               createdAt
@@ -291,6 +294,7 @@ export namespace ItemService {
               quantity 
               minQuantity 
               unitPrice 
+              amountType
               location 
               notes 
               createdAt 

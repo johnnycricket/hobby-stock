@@ -143,7 +143,7 @@ export const ProjectForm = ({
       return;
     }
 
-    const quantity = parseInt(quantityUsed);
+    const quantity = parseFloat(quantityUsed);
     if (isNaN(quantity) || quantity <= 0) {
       setError("Quantity must be a positive number");
       return;
@@ -379,7 +379,8 @@ export const ProjectForm = ({
               </select>
               <input
                 type="number"
-                min="1"
+                step="0.01"
+                min="0.01"
                 value={quantityUsed}
                 onChange={(e) => setQuantityUsed(e.target.value)}
                 placeholder="Qty"

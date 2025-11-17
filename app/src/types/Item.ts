@@ -1,5 +1,11 @@
 import { Category } from "./Category";
 
+export enum AmountType {
+  PERCENT = "PERCENT",
+  COUNT = "COUNT",
+  VOLUME = "VOLUME",
+}
+
 export type Item = {
   id: number;
   name: string;
@@ -8,6 +14,7 @@ export type Item = {
   quantity: number;
   minQuantity?: number;
   unitPrice?: number;
+  amountType: AmountType;
   location: string;
   notes?: string;
   createdAt: string;
@@ -22,6 +29,7 @@ export type ItemInput = {
   quantity: number;
   minQuantity?: number;
   unitPrice?: number;
+  amountType?: AmountType;
   location: string;
   notes?: string;
 };

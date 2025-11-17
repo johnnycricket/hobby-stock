@@ -29,7 +29,7 @@ constructor(private val projectItemService: ProjectItemService) {
   @MutationMapping
   fun updateProjectItem(
           @Argument id: String,
-          @Argument quantityUsed: Int
+          @Argument quantityUsed: Float
   ): ProjectItemMutationResult {
     val uuid = UUID.fromString(id)
     return projectItemService.updateProjectItem(uuid, quantityUsed)

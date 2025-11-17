@@ -7,9 +7,10 @@ data class Item(
         val name: String,
         val description: String?,
         val categoryId: Int,
-        val quantity: Int,
-        val minQuantity: Int?,
+        val quantity: Float,
+        val minQuantity: Float?,
         val unitPrice: Float?,
+        val amountType: AmountType,
         val location: String,
         val notes: String?,
         val createdAt: String,
@@ -21,10 +22,23 @@ data class ItemInput(
         val name: String,
         val description: String?,
         val categoryId: String,
-        val quantity: Int,
-        val minQuantity: Int?,
+        val quantity: Float,
+        val minQuantity: Float?,
         val unitPrice: Float?,
+        val amountType: AmountType?,
         val location: String,
+        val notes: String?
+)
+
+data class ItemUpdateInput(
+        val name: String?,
+        val description: String?,
+        val categoryId: Int?,
+        val quantity: Float?,
+        val minQuantity: Float?,
+        val unitPrice: Float?,
+        val amountType: AmountType?,
+        val location: String?,
         val notes: String?
 )
 

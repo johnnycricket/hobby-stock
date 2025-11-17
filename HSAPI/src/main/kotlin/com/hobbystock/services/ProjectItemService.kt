@@ -8,6 +8,7 @@ import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectItemMutationResult
 import com.hobbystock.types.ProjectItemPage
+import java.math.BigDecimal
 import java.util.UUID
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -122,7 +123,7 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
         fun addItemToProject(
                 projectId: UUID,
                 itemId: UUID,
-                quantityUsed: Int?
+                quantityUsed: Float?
         ): ProjectItemMutationResult {
                 try {
                         // Check if the item is already in the project (UNIQUE constraint)
@@ -140,7 +141,7 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                                 ProjectItemsEntity(
                                         projectId = projectId,
                                         itemId = itemId,
-                                        quantityUsed = quantityUsed ?: 0
+                                        quantityUsed = BigDecimal.valueOf((quantityUsed ?: 0.0f).toDouble())
                                 )
                         val savedProjectItem = projectItemRepository.save(entity).toGraphQLType()
                         return ProjectItemMutationResult(
@@ -157,12 +158,12 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                 }
         }
         @Transactional
-        fun updateProjectItem(id: UUID, quantityUsed: Int): ProjectItemMutationResult {
+        fun updateProjectItem(id: UUID, quantityUsed: Float): ProjectItemMutationResult {
                 val entity =
                         projectItemRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Project item not found")
                         }
-                val updatedEntity = entity.copy(quantityUsed = quantityUsed)
+                val updatedEntity = entity.copy(quantityUsed = BigDecimal.valueOf(quantityUsed.toDouble()))
                 val savedProjectItem = projectItemRepository.save(updatedEntity).toGraphQLType()
                 return ProjectItemMutationResult(
                         success = true,
@@ -197,7 +198,7 @@ private fun ProjectItemsEntity.toGraphQLType(): ProjectItem =
                 id = this.id!!,
                 projectId = this.projectId,
                 itemId = this.itemId,
-                quantityUsed = this.quantityUsed,
+                quantityUsed = this.quantityUsed.toFloat(),
                 createdAt = this.createdAt.toString()
         )
 

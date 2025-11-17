@@ -1,6 +1,7 @@
 package com.hobbystock.entities
 
 import jakarta.persistence.*
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -13,7 +14,7 @@ data class ProjectItemsEntity(
         val id: UUID? = null,
         @Column(name = "project_id", nullable = false) val projectId: UUID,
         @Column(name = "item_id", nullable = false) val itemId: UUID,
-        @Column(name = "quantity_used", nullable = false) val quantityUsed: Int,
+        @Column(name = "quantity_used", nullable = false, precision = 10, scale = 2) val quantityUsed: BigDecimal,
         @Column(name = "created_at") val createdAt: LocalDateTime = LocalDateTime.now(),
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "project_id", insertable = false, updatable = false)

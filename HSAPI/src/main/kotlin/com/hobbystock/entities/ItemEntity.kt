@@ -1,5 +1,6 @@
 package com.hobbystock.entities
 
+import com.hobbystock.types.AmountType
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -15,9 +16,11 @@ data class ItemEntity(
         @Column(name = "name", nullable = false) val name: String,
         @Column(name = "description") val description: String? = null,
         @Column(name = "category_id", nullable = false) val categoryId: Int,
-        @Column(name = "quantity", nullable = false) val quantity: Int,
-        @Column(name = "min_quantity") val minQuantity: Int?,
+        @Column(name = "quantity", nullable = false, precision = 10, scale = 2) val quantity: BigDecimal,
+        @Column(name = "min_quantity", precision = 10, scale = 2) val minQuantity: BigDecimal?,
         @Column(name = "unit_price", precision = 10, scale = 2) val unitPrice: BigDecimal?,
+        @Enumerated(EnumType.STRING)
+        @Column(name = "amount_type", nullable = false) val amountType: AmountType = AmountType.COUNT,
         @Column(name = "location") val location: String,
         @Column(name = "notes") val notes: String?,
         @Column(name = "created_at") val createdAt: LocalDateTime = LocalDateTime.now(),
