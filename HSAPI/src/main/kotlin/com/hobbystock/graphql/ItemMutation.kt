@@ -3,6 +3,7 @@ package com.hobbystock.graphql
 import com.hobbystock.services.ItemService
 import com.hobbystock.types.ItemInput
 import com.hobbystock.types.ItemMutationResult
+import com.hobbystock.types.ItemUpdateInput
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
@@ -23,7 +24,7 @@ class ItemMutationController @Autowired constructor(private val itemService: Ite
   }
 
   @MutationMapping
-  fun updateItem(@Argument id: String, @Argument input: ItemInput): ItemMutationResult {
+  fun updateItem(@Argument id: String, @Argument input: ItemUpdateInput): ItemMutationResult {
     val uuid = UUID.fromString(id)
     return ItemMutationResult(
             success = true,

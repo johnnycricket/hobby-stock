@@ -1,6 +1,7 @@
 package com.hobbystock.repositories
 
 import com.hobbystock.entities.ItemEntity
+import java.math.BigDecimal
 import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository
 interface ItemRepository : JpaRepository<ItemEntity, UUID> {
         fun findByCategoryId(categoryId: Int): List<ItemEntity>
         fun findByLocation(location: String): List<ItemEntity>
-        fun findByQuantityLessThan(minQuantity: Int): List<ItemEntity>
+        fun findByQuantityLessThan(minQuantity: BigDecimal): List<ItemEntity>
         @Query(
                 "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
         )
@@ -23,7 +24,7 @@ interface ItemRepository : JpaRepository<ItemEntity, UUID> {
         override fun findAll(pageable: Pageable): Page<ItemEntity>
         fun findByCategoryId(categoryId: Int, pageable: Pageable): Page<ItemEntity>
         fun findByLocation(location: String, pageable: Pageable): Page<ItemEntity>
-        fun findByQuantityLessThan(minQuantity: Int, pageable: Pageable): Page<ItemEntity>
+        fun findByQuantityLessThan(minQuantity: BigDecimal, pageable: Pageable): Page<ItemEntity>
         @Query(
                 "SELECT i FROM ItemEntity i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))"
         )

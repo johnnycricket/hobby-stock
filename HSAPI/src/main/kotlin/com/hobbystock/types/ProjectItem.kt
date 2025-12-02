@@ -6,11 +6,11 @@ data class ProjectItem(
         val id: UUID,
         val projectId: UUID,
         val itemId: UUID,
-        val quantityUsed: Int?,
+        val quantityUsed: Float?,
         val createdAt: String
 )
 
-data class ProjectItemInput(val projectId: String, val itemId: String, val quantityUsed: Int?)
+data class ProjectItemInput(val projectId: String, val itemId: String, val quantityUsed: Float?)
 
 data class ProjectItemMutationResult(
         val success: Boolean,
