@@ -1,5 +1,7 @@
 import { ProjectService } from "@/services/project-service";
+import { ItemService } from "@/services/item-service";
 import { Project } from "@/types/Project";
+import { Item } from "@/types/Item";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
@@ -12,6 +14,7 @@ export function ProjectDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemsMap, setItemsMap] = useState<Map<number, Item>>(new Map());
 
   const fetchProject = async (projectId: string) => {
     try {
@@ -22,7 +25,28 @@ export function ProjectDetails() {
         setLoading(false);
         return;
       }
-      setProject(response.data.project);
+      const projectData = response.data.project;
+      setProject(projectData);
+
+      // Fetch item details for all project items
+      if (projectData.items && projectData.items.length > 0) {
+        const itemIds = projectData.items.map((pi) => pi.itemId);
+        const uniqueItemIds = [...new Set(itemIds)];
+        
+        // Fetch all items and create a map
+        const itemsResponse = await ItemService.findAll();
+        if (!itemsResponse.errors && itemsResponse.data?.items) {
+          const items = itemsResponse.data.items;
+          const map = new Map<number, Item>();
+          items.forEach((item: Item) => {
+            if (uniqueItemIds.includes(item.id)) {
+              map.set(item.id, item);
+            }
+          });
+          setItemsMap(map);
+        }
+      }
+      
       setLoading(false);
     } catch (error: any) {
       setError(error.message);
@@ -153,9 +177,42 @@ export function ProjectDetails() {
 
           <div>
             <h2 className="text-sm font-medium text-gray-500">Items</h2>
-            <p className="mt-1 text-lg text-gray-900">
-              {project.items?.length ?? 0} items
-            </p>
+            {project.items && project.items.length > 0 ? (
+              <div className="mt-2 space-y-2">
+                {project.items.map((projectItem) => {
+                  const item = itemsMap.get(projectItem.itemId);
+                  return (
+                    <div
+                      key={projectItem.id}
+                      className="flex justify-between items-center p-2 bg-gray-50 rounded"
+                    >
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {item?.name || `Item #${projectItem.itemId}`}
+                        </p>
+                        {item?.description && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="ml-4 text-right">
+                        <p className="text-sm text-gray-700">
+                          Qty: {projectItem.quantityUsed}
+                        </p>
+                        {item?.amountType && (
+                          <p className="text-xs text-gray-500">
+                            {item.amountType}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="mt-1 text-lg text-gray-900">No items added</p>
+            )}
           </div>
 
           {project.createdAt && (

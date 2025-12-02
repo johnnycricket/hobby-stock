@@ -1,9 +1,11 @@
 import { useState } from "react";
 
 import { ProjectService } from "@/services/project-service";
+import { ItemService } from "@/services/item-service";
 import { useEffect } from "react";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { Project } from "@/types/Project";
+import { Item } from "@/types/Item";
 import { useNavigate } from "react-router-dom";
 
 export function Projects() {
@@ -13,20 +15,40 @@ export function Projects() {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
+  const [itemsMap, setItemsMap] = useState<Map<number, Item>>(new Map());
 
   const navigate = useNavigate();
 
   const fetchProjects = async () => {
     try {
+      setLoading(true);
       const response = await ProjectService.findAllPaginated(page, size);
       if (response.errors) {
         setError(response.errors[0].message);
         setLoading(false);
         return;
       }
-      setProjects(response.data.projectsPaginated.content);
+      const projectsData = response.data.projectsPaginated.content;
+      setProjects(projectsData);
       setPage(response.data.projectsPaginated.pageInfo.currentPage);
       setTotal(response.data.projectsPaginated.pageInfo.totalElements);
+
+      // Fetch all items to display item names in project cards
+      try {
+        const itemsResponse = await ItemService.findAll();
+        if (!itemsResponse.errors && itemsResponse.data?.items) {
+          const items = itemsResponse.data.items;
+          const map = new Map<number, Item>();
+          items.forEach((item: Item) => {
+            map.set(item.id, item);
+          });
+          setItemsMap(map);
+        }
+      } catch (itemsError) {
+        // If items fetch fails, continue without item names
+        console.warn("Failed to fetch items for project cards:", itemsError);
+      }
+
       setLoading(false);
     } catch (error: any) {
       setError(error.message);
@@ -67,6 +89,7 @@ export function Projects() {
             <ProjectCard
               key={project.id}
               project={project}
+              itemsMap={itemsMap}
               onEdit={(id) => {
                 navigate(`/projects/${id}/edit`);
               }}
