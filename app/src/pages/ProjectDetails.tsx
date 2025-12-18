@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { SupplyCheck } from "@/components/project/SupplyCheck";
 
 export function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +33,7 @@ export function ProjectDetails() {
       if (projectData.items && projectData.items.length > 0) {
         const itemIds = projectData.items.map((pi) => pi.itemId);
         const uniqueItemIds = [...new Set(itemIds)];
-        
+
         // Fetch all items and create a map
         const itemsResponse = await ItemService.findAll();
         if (!itemsResponse.errors && itemsResponse.data?.items) {
@@ -46,7 +47,7 @@ export function ProjectDetails() {
           setItemsMap(map);
         }
       }
-      
+
       setLoading(false);
     } catch (error: any) {
       setError(error.message);
@@ -235,6 +236,15 @@ export function ProjectDetails() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Supply Check Section */}
+      <div className="mt-6">
+        <SupplyCheck
+          supplyCheck={project.supplyCheck}
+          loading={loading}
+          error={error}
+        />
       </div>
 
       <ConfirmModal
