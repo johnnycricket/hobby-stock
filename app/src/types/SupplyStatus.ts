@@ -1,0 +1,5 @@
+export enum SupplyStatus {
+  SUFFICIENT = "SUFFICIENT",
+  INSUFFICIENT = "INSUFFICIENT",
+  MISSING = "MISSING",
+}

@@ -1,4 +1,5 @@
 import { ProjectItem } from "./ProjectItem";
+import { ProjectSupplyCheck } from "./ProjectSupplyCheck";
 
 export type Project = {
   id: number;
@@ -10,6 +11,7 @@ export type Project = {
   createdAt: string;
   updatedAt?: string;
   items?: ProjectItem[];
+  supplyCheck?: ProjectSupplyCheck[];
 };
 
 export type ProjectInput = {
