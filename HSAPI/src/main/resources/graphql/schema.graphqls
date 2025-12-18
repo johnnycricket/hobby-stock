@@ -170,6 +170,12 @@ enum AmountType {
   VOLUME
 }
 
+enum SupplyStatus {
+  SUFFICIENT
+  INSUFFICIENT
+  MISSING
+}
+
 # type types
 type Category {
   id: Int!
@@ -203,6 +209,16 @@ type Project {
   createdAt: String!
   updatedAt: String
   items: [ProjectItem]
+  supplyCheck: [ProjectSupplyCheck!]!
+}
+
+type ProjectSupplyCheck {
+  itemId: String!
+  itemName: String!
+  requiredQuantity: Float!
+  availableQuantity: Float!
+  supplyStatus: SupplyStatus!
+  quantityGap: Float!
 }
 
 type ProjectItem {
