@@ -27,6 +27,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify TypeScript ESLint packages are installed
+        run: |
+          ls -la node_modules/@typescript-eslint/ || echo "TypeScript ESLint packages not found"
+          npm list @typescript-eslint/eslint-plugin @typescript-eslint/parser
+
       - name: Run tests
         run: npm test
 
