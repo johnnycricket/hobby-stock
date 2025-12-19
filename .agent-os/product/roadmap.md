@@ -57,7 +57,7 @@
 
 ### Features
 
-- [ ] Project supply checking - View required items for a project and compare against available inventory `M`
+- [X] Project supply checking - View required items for a project and compare against available inventory `M`
 - [ ] Project status workflow - Enhanced project status management with transitions (planning, active, on-hold, completed) `S`
 - [ ] Project completion tracking - Mark projects as complete with end dates and archive completed projects `S`
 - [ ] Usage analytics - Track which items are used most frequently across projects `M`
