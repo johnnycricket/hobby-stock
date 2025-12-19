@@ -2,9 +2,11 @@ package com.hobbystock.graphql
 
 import com.hobbystock.services.ProjectItemService
 import com.hobbystock.services.ProjectService
+import com.hobbystock.services.SupplyCheckService
 import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectItem
 import com.hobbystock.types.ProjectPage
+import com.hobbystock.types.ProjectSupplyCheck
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.Argument
@@ -13,9 +15,12 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
 
 @Controller
-class ProjectQueryController @Autowired constructor(
-    private val projectService: ProjectService,
-    private val projectItemService: ProjectItemService
+class ProjectQueryController
+@Autowired
+constructor(
+        private val projectService: ProjectService,
+        private val projectItemService: ProjectItemService,
+        private val supplyCheckService: SupplyCheckService
 ) {
   @QueryMapping
   fun projects(): List<Project> {
@@ -67,5 +72,11 @@ class ProjectQueryController @Autowired constructor(
   fun items(project: Project): List<ProjectItem> {
     val projectUuid = project.id
     return projectItemService.findByProjectId(projectUuid)
+  }
+
+  @SchemaMapping(typeName = "Project", field = "supplyCheck")
+  fun supplyCheck(project: Project): List<ProjectSupplyCheck> {
+    val projectUuid = project.id
+    return supplyCheckService.calculateSupplyCheck(projectUuid)
   }
 }
