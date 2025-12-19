@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { ProjectService } from "@/services/project-service";
 import { ItemService } from "@/services/item-service";
-import { useEffect } from "react";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
@@ -22,7 +21,7 @@ export function Projects() {
 
   const navigate = useNavigate();
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
       const response = await ProjectService.findAllPaginated(page, size);
@@ -57,11 +56,11 @@ export function Projects() {
       setError(getErrorMessage(error));
       setLoading(false);
     }
-  };
+  }, [page, size]);
 
   useEffect(() => {
     fetchProjects();
-  }, [page, size]);
+  }, [fetchProjects]);
 
   const deleteProject = async (id: string) => {
     const response = await ProjectService.deleteProject(id);

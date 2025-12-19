@@ -40,7 +40,7 @@ export function AddEditInventory() {
     if (id) {
       fetchItem(id);
     }
-  }, []);
+  }, [id]);
 
   return (
     <div className="px-4 py-6 sm:px-0">
