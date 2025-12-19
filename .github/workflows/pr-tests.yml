@@ -37,10 +37,6 @@ jobs:
     name: Backend Tests
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./HSAPI
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -50,14 +46,26 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
-          cache: "gradle"
-          cache-dependency-path: HSAPI/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Install Gradle and generate wrapper if needed
+        run: |
+          cd HSAPI
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            # Install Gradle to generate wrapper
+            wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+            unzip -q gradle-8.5-bin.zip
+            ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
+            rm -rf gradle-8.5 gradle-8.5-bin.zip
+          fi
 
       - name: Make Gradle wrapper executable
+        working-directory: ./HSAPI
         run: chmod +x gradlew
 
       - name: Run tests
+        working-directory: ./HSAPI
         run: ./gradlew test --no-daemon
 
       - name: Build application
+        working-directory: ./HSAPI
         run: ./gradlew build --no-daemon -x test
