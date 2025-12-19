@@ -7,6 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { SupplyCheck } from "@/components/project/SupplyCheck";
+import { getErrorMessage } from "@/lib/utils";
 
 export function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -49,8 +50,8 @@ export function ProjectDetails() {
       }
 
       setLoading(false);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
       setLoading(false);
     }
   };
@@ -76,8 +77,8 @@ export function ProjectDetails() {
         return;
       }
       navigate("/projects");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
       setShowDeleteModal(false);
     }
   };

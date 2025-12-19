@@ -7,13 +7,16 @@ import { ProjectCard } from "@/components/project/ProjectCard";
 import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "@/lib/utils";
 
 export function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [size, setSize] = useState(10);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [total, setTotal] = useState(0);
   const [itemsMap, setItemsMap] = useState<Map<number, Item>>(new Map());
 
@@ -50,8 +53,8 @@ export function Projects() {
       }
 
       setLoading(false);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
       setLoading(false);
     }
   };
