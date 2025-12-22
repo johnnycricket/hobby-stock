@@ -1,5 +1,6 @@
 package com.hobbystock.entities
 
+import com.hobbystock.types.ProjectStatus
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -14,7 +15,9 @@ data class ProjectsEntity(
         val id: UUID? = null,
         @Column(name = "name", nullable = false) val name: String,
         @Column(name = "description") val description: String?,
-        @Column(name = "status", nullable = false) val status: String,
+        @Enumerated(EnumType.STRING)
+        @Column(name = "status", nullable = false)
+        val status: ProjectStatus = ProjectStatus.PLANNING,
         @Column(name = "start_date") val startDate: LocalDate?,
         @Column(name = "end_date") val endDate: LocalDate?,
         @Column(name = "created_at") val createdAt: LocalDateTime = LocalDateTime.now(),

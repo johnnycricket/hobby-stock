@@ -6,7 +6,7 @@ data class Project(
         val id: UUID,
         val name: String,
         val description: String?,
-        val status: String,
+        val status: ProjectStatus,
         val startDate: String?,
         val endDate: String?,
         val createdAt: String,
@@ -17,7 +17,7 @@ data class Project(
 data class ProjectInput(
         val name: String,
         val description: String?,
-        val status: String,
+        val status: ProjectStatus,
         val startDate: String?,
         val endDate: String?
 )

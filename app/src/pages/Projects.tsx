@@ -5,6 +5,7 @@ import { ItemService } from "@/services/item-service";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
+import { ProjectStatus } from "@/types/ProjectStatus";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/lib/utils";
 
@@ -18,13 +19,23 @@ export function Projects() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [total, setTotal] = useState(0);
   const [itemsMap, setItemsMap] = useState<Map<number, Item>>(new Map());
+  const [statusFilter, setStatusFilter] = useState<ProjectStatus | "ALL">(
+    "ALL"
+  );
 
   const navigate = useNavigate();
 
   const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await ProjectService.findAllPaginated(page, size);
+      const response =
+        statusFilter === "ALL"
+          ? await ProjectService.findAllPaginated(page, size)
+          : await ProjectService.findByStatusPaginated(
+              statusFilter,
+              page,
+              size
+            );
       if (response.errors) {
         setError(response.errors[0].message);
         setLoading(false);
@@ -56,7 +67,7 @@ export function Projects() {
       setError(getErrorMessage(error));
       setLoading(false);
     }
-  }, [page, size]);
+  }, [page, size, statusFilter]);
 
   useEffect(() => {
     fetchProjects();
@@ -72,8 +83,35 @@ export function Projects() {
   return (
     <div className="px-4 py-6 sm:px-0">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-        <p className="mt-2 text-gray-600">View and manage your projects.</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+            <p className="mt-2 text-gray-600">View and manage your projects.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="status-filter"
+              className="text-sm font-medium text-gray-700"
+            >
+              Filter by Status:
+            </label>
+            <select
+              id="status-filter"
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value as ProjectStatus | "ALL");
+                setPage(0); // Reset to first page when filter changes
+              }}
+              className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value={ProjectStatus.PLANNING}>Planning</option>
+              <option value={ProjectStatus.ACTIVE}>Active</option>
+              <option value={ProjectStatus.ON_HOLD}>On Hold</option>
+              <option value={ProjectStatus.COMPLETED}>Completed</option>
+            </select>
+          </div>
+        </div>
       </div>
       {loading && (
         <div className="text-center py-8">

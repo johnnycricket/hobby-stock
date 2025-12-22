@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { Project } from "../Project";
 import { ProjectSupplyCheck } from "../ProjectSupplyCheck";
 import { SupplyStatus } from "../SupplyStatus";
+import { ProjectStatus } from "../ProjectStatus";
 
 describe("Project type with supplyCheck", () => {
   it("should allow Project with optional supplyCheck field", () => {
@@ -9,7 +10,7 @@ describe("Project type with supplyCheck", () => {
       id: 1,
       name: "Test Project",
       description: "Test Description",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       createdAt: "2025-01-01T00:00:00",
     };
 
@@ -32,7 +33,7 @@ describe("Project type with supplyCheck", () => {
       id: 1,
       name: "Test Project",
       description: "Test Description",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       createdAt: "2025-01-01T00:00:00",
       supplyCheck: supplyCheck,
     };

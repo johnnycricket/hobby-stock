@@ -17,7 +17,7 @@ type Query {
   # projects
   projects: [Project!]!
   project(id: String!): Project
-  projectsByStatus(status: String!): [Project!]!
+  projectsByStatus(status: ProjectStatus!): [Project!]!
   searchProjects(searchTerm: String!): [Project!]!
 
   # project-item relationships
@@ -45,7 +45,7 @@ type Query {
 
   projectsPaginated(page: Int = 0, size: Int = 20): ProjectPage!
   projectsByStatusPaginated(
-    status: String!
+    status: ProjectStatus!
     page: Int = 0
     size: Int = 20
   ): ProjectPage!
@@ -87,7 +87,10 @@ type Mutation {
   createProject(input: ProjectInput!): ProjectMutationResult!
   updateProject(id: String!, input: ProjectInput!): ProjectMutationResult!
   deleteProject(id: String!): MutationResult!
-  updateProjectStatus(id: String!, status: String!): ProjectMutationResult!
+  updateProjectStatus(
+    id: String!
+    status: ProjectStatus!
+  ): ProjectMutationResult!
   completeProject(id: String!, endDate: String): ProjectMutationResult!
 
   # project-item relationships
@@ -121,7 +124,7 @@ input ItemInput {
 input ProjectInput {
   name: String!
   description: String
-  status: String!
+  status: ProjectStatus!
   startDate: String
   endDate: String
 }
@@ -176,6 +179,13 @@ enum SupplyStatus {
   MISSING
 }
 
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+}
+
 # type types
 type Category {
   id: Int!
@@ -203,7 +213,7 @@ type Project {
   id: String!
   name: String!
   description: String
-  status: String!
+  status: ProjectStatus!
   startDate: String
   endDate: String
   createdAt: String!

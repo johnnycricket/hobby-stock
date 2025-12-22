@@ -70,7 +70,7 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { projectsByStatusPaginated(status: "${status}", page: ${page}, size: ${size}) { content { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { projectsByStatusPaginated(status: ${status}, page: ${page}, size: ${size}) { content { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -254,7 +254,7 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { updateProjectStatus(id: "${id}", status: "${status}") { success message project { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } } }`,
+        query: `mutation { updateProjectStatus(id: "${id}", status: ${status}) { success message project { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } } }`,
       }),
     });
     if (!response.ok) {

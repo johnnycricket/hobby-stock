@@ -35,7 +35,7 @@ constructor(
   }
 
   @QueryMapping
-  fun projectsByStatus(@Argument status: String): List<Project> {
+  fun projectsByStatus(@Argument status: com.hobbystock.types.ProjectStatus): List<Project> {
     return projectService.findByStatus(status)
   }
 
@@ -52,7 +52,7 @@ constructor(
 
   @QueryMapping
   fun projectsByStatusPaginated(
-          @Argument status: String,
+          @Argument status: com.hobbystock.types.ProjectStatus,
           @Argument page: Int = 0,
           @Argument size: Int = 20
   ): ProjectPage {

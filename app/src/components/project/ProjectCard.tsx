@@ -2,10 +2,16 @@ import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ProjectStatusBadge } from "./ProjectStatusBadge";
 
-export function ProjectCard({ project, itemsMap, onEdit, onDelete }: ProjectCard.Props) {
+export function ProjectCard({
+  project,
+  itemsMap,
+  onEdit,
+  onDelete,
+}: ProjectCard.Props) {
   const itemCount = project.items?.length ?? 0;
-  
+
   return (
     <div className="card">
       <div className="flex justify-between items-center">
@@ -31,7 +37,7 @@ export function ProjectCard({ project, itemsMap, onEdit, onDelete }: ProjectCard
         <p className="text-gray-600">{project.description}</p>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-gray-600">{project.status}</p>
+        <ProjectStatusBadge status={project.status} size="sm" />
         <div className="text-gray-600">
           <p className="text-sm font-medium">
             {itemCount} {itemCount === 1 ? "item" : "items"}
@@ -39,10 +45,11 @@ export function ProjectCard({ project, itemsMap, onEdit, onDelete }: ProjectCard
           {project.items && project.items.length > 0 && (
             <div className="mt-1 space-y-1">
               {project.items.slice(0, 3).map((projectItem) => {
-                const item = itemsMap.get(projectItem.itemId);
+                const item = itemsMap?.get(projectItem.itemId);
                 return (
                   <p key={projectItem.id} className="text-xs text-gray-500">
-                    • {item?.name || `Item #${projectItem.itemId}`} (Qty: {projectItem.quantityUsed})
+                    • {item?.name || `Item #${projectItem.itemId}`} (Qty:{" "}
+                    {projectItem.quantityUsed})
                   </p>
                 );
               })}
