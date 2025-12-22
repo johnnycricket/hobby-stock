@@ -115,7 +115,8 @@ class ProjectService(
                                 startDate = project.startDate?.let { LocalDate.parse(it) },
                                 endDate = project.endDate?.let { LocalDate.parse(it) },
                                 createdAt = LocalDateTime.now(),
-                                updatedAt = LocalDateTime.now()
+                                updatedAt = LocalDateTime.now(),
+                                completedAt = null
                         )
                 return projectRepository.save(entity).toGraphQLType()
         }
@@ -217,5 +218,5 @@ private fun ProjectsEntity.toGraphQLType(): Project =
                 endDate = this.endDate?.toString(),
                 completedAt = this.completedAt?.toString(),
                 createdAt = this.createdAt.toString(),
-                updatedAt = this.updatedAt?.toString()
+                updatedAt = this.updatedAt.toString()
         )

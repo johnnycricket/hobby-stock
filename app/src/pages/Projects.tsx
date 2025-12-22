@@ -37,7 +37,7 @@ export function Projects() {
           // Filter out completed projects
           response = await ProjectService.findAllPaginated(page, size);
           // Filter completed projects on frontend
-          if (!response.errors && response.data?.projectsPaginated) {
+          if (!response.errors && response.data?.projectsPaginated?.content) {
             response.data.projectsPaginated.content =
               response.data.projectsPaginated.content.filter(
                 (p: Project) => p.status !== ProjectStatus.COMPLETED
@@ -56,10 +56,34 @@ export function Projects() {
         setLoading(false);
         return;
       }
-      const projectsData = response.data.projectsPaginated.content;
-      setProjects(projectsData);
-      setPage(response.data.projectsPaginated.pageInfo.currentPage);
-      setTotal(response.data.projectsPaginated.pageInfo.totalElements);
+
+      // Safely extract paginated data with proper null/undefined checks
+      // Handle different response keys based on which query was used:
+      // - projectsPaginated (for findAllPaginated)
+      // - projectsByStatusPaginated (for findByStatusPaginated)
+      const paginatedData =
+        response.data?.projectsPaginated ??
+        response.data?.projectsByStatusPaginated;
+
+      if (!paginatedData) {
+        setError("Invalid response format: missing paginated data");
+        setLoading(false);
+        return;
+      }
+
+      // Handle content - it might be undefined or an empty array
+      const projectsData = paginatedData.content ?? [];
+      setProjects(Array.isArray(projectsData) ? projectsData : []);
+
+      // Safely extract page info
+      const pageInfo = paginatedData.pageInfo;
+      if (pageInfo) {
+        setPage(pageInfo.currentPage ?? 0);
+        setTotal(pageInfo.totalElements ?? 0);
+      } else {
+        setPage(0);
+        setTotal(0);
+      }
 
       // Fetch all items to display item names in project cards
       try {
@@ -159,19 +183,34 @@ export function Projects() {
         </div>
       )}
       {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              itemsMap={itemsMap}
-              onEdit={(id) => {
-                navigate(`/projects/${id}/edit`);
-              }}
-              onDelete={(id) => deleteProject(id)}
-            />
-          ))}
-        </div>
+        <>
+          {projects.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">
+                {statusFilter === "ALL"
+                  ? "No projects found."
+                  : `No projects found with status "${statusFilter}".`}
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                Try adjusting your filters or create a new project.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  itemsMap={itemsMap}
+                  onEdit={(id) => {
+                    navigate(`/projects/${id}/edit`);
+                  }}
+                  onDelete={(id) => deleteProject(id)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
