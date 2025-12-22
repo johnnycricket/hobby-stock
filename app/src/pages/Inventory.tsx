@@ -1,8 +1,9 @@
 import { Item } from "@/types/Item";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ItemService } from "@/services/item-service";
 import { InventoryItemCard } from "@/components/inventory/InventoryItemCard";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "@/lib/utils";
 
 export function Inventory() {
   const navigate = useNavigate();
@@ -10,10 +11,12 @@ export function Inventory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [size, setSize] = useState(10);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [total, setTotal] = useState(0);
 
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     try {
       const response = await ItemService.findAllPaginated(page, size);
       if (response.errors) {
@@ -26,15 +29,15 @@ export function Inventory() {
       setPage(response.data.itemsPaginated.pageInfo.currentPage);
       setTotal(response.data.itemsPaginated.pageInfo.totalElements);
       setLoading(false);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
       setLoading(false);
     }
-  };
+  }, [page, size]);
 
   useEffect(() => {
     fetchItems();
-  }, [page, size]);
+  }, [fetchItems]);
 
   const deleteItem = async (id: string) => {
     const response = await ItemService.deleteItem(id);

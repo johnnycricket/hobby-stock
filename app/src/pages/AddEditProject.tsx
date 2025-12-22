@@ -6,6 +6,7 @@ import { Item } from "@/types/Item";
 import { ProjectItem } from "@/types/ProjectItem";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { getErrorMessage } from "@/lib/utils";
 
 export function AddEditProject() {
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +25,8 @@ export function AddEditProject() {
         return;
       }
       setItems(response.data.items);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
     }
   };
 
@@ -39,8 +40,8 @@ export function AddEditProject() {
       const fetchedProject = response.data.project;
       setProject(fetchedProject);
       setProjectItems(fetchedProject.items || []);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
     }
   };
 

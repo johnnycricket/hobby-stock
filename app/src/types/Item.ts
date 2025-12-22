@@ -35,7 +35,12 @@ export type ItemInput = {
 };
 
 export namespace Item {
-  export function is(item: any): item is Item {
-    return item && typeof item === "object" && "id" in item;
+  export function is(item: unknown): item is Item {
+    return (
+      item !== null &&
+      typeof item === "object" &&
+      "id" in item &&
+      typeof (item as Record<string, unknown>).id === "number"
+    );
   }
 }

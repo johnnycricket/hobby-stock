@@ -2,7 +2,7 @@ import { HealthService } from "@/services/health-service";
 import { useState, useEffect } from "react";
 
 export function Home() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<{ data?: { hello?: string } } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

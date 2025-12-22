@@ -53,12 +53,12 @@ describe("ProjectDetails with SupplyCheck", () => {
     vi.mocked(ProjectService.findById).mockResolvedValue({
       data: { project: mockProject },
       errors: undefined,
-    } as any);
+    } as unknown);
 
     vi.mocked(ItemService.findAll).mockResolvedValue({
       data: { items: [] },
       errors: undefined,
-    } as any);
+    } as unknown);
 
     renderWithRouter(<ProjectDetails />);
 
@@ -84,12 +84,12 @@ describe("ProjectDetails with SupplyCheck", () => {
     vi.mocked(ProjectService.findById).mockResolvedValue({
       data: { project: mockProject },
       errors: undefined,
-    } as any);
+    } as unknown);
 
     vi.mocked(ItemService.findAll).mockResolvedValue({
       data: { items: [] },
       errors: undefined,
-    } as any);
+    } as unknown);
 
     renderWithRouter(<ProjectDetails />);
 
@@ -123,12 +123,12 @@ describe("ProjectDetails with SupplyCheck", () => {
     vi.mocked(ProjectService.findById).mockResolvedValue({
       data: { project: initialProject },
       errors: undefined,
-    } as any);
+    } as unknown);
 
     vi.mocked(ItemService.findAll).mockResolvedValue({
       data: { items: [] },
       errors: undefined,
-    } as any);
+    } as unknown);
 
     renderWithRouter(<ProjectDetails />);
 

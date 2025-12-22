@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { ProjectService } from "@/services/project-service";
 import { ProjectItemService } from "@/services/project-item-service";
 import { Trash2 } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
 
 type FormData = {
   name: string;
@@ -124,8 +125,8 @@ export const ProjectForm = ({
           );
         }
       }
-    } catch (error: any) {
-      setError(error.message || "An error occurred");
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
     }
   };
 
@@ -202,9 +203,9 @@ export const ProjectForm = ({
           response.data.addItemToProject.message || "Failed to add item"
         );
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error adding item to project:", error);
-      setError(error.message || "An error occurred");
+      setError(getErrorMessage(error));
     }
   };
 
@@ -242,8 +243,8 @@ export const ProjectForm = ({
             "Failed to remove item"
         );
       }
-    } catch (error: any) {
-      setError(error.message || "An error occurred");
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
     }
   };
 
