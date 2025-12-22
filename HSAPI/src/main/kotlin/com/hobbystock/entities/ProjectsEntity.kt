@@ -20,6 +20,7 @@ data class ProjectsEntity(
         val status: ProjectStatus = ProjectStatus.PLANNING,
         @Column(name = "start_date") val startDate: LocalDate?,
         @Column(name = "end_date") val endDate: LocalDate?,
+        @Column(name = "completed_at") val completedAt: LocalDateTime?,
         @Column(name = "created_at") val createdAt: LocalDateTime = LocalDateTime.now(),
         @Column(name = "updated_at") val updatedAt: LocalDateTime = LocalDateTime.now()
 )

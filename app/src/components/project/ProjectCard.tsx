@@ -1,6 +1,7 @@
 import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
-import { Pencil, Trash2 } from "lucide-react";
+import { ProjectStatus } from "@/types/ProjectStatus";
+import { Pencil, Trash2, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 
@@ -38,6 +39,14 @@ export function ProjectCard({
       </div>
       <div className="flex flex-col gap-2">
         <ProjectStatusBadge status={project.status} size="sm" />
+        {project.completedAt && (
+          <div className="flex items-center gap-1 text-xs text-gray-500">
+            <Calendar className="w-3 h-3" />
+            <span>
+              Completed {new Date(project.completedAt).toLocaleDateString()}
+            </span>
+          </div>
+        )}
         <div className="text-gray-600">
           <p className="text-sm font-medium">
             {itemCount} {itemCount === 1 ? "item" : "items"}

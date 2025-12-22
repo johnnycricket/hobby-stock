@@ -87,6 +87,24 @@ class ProjectService(
                 )
         }
 
+        fun findCompletedProjectsPaginated(page: Int = 0, size: Int = 20): ProjectPage {
+                val pageable = PageRequest.of(page, size)
+                val pageResult =
+                        projectRepository.findCompletedProjects(ProjectStatus.COMPLETED, pageable)
+
+                return ProjectPage(
+                        content = pageResult.content.map { it.toGraphQLType() },
+                        pageInfo =
+                                PageInfo(
+                                        totalElements = pageResult.totalElements,
+                                        totalPages = pageResult.totalPages,
+                                        currentPage = pageResult.number,
+                                        hasNext = pageResult.hasNext(),
+                                        hasPrevious = pageResult.hasPrevious()
+                                )
+                )
+        }
+
         @Transactional
         fun createProject(project: ProjectInput): Project {
                 val entity =
@@ -177,6 +195,7 @@ class ProjectService(
                         existing.copy(
                                 status = ProjectStatus.COMPLETED,
                                 endDate = endDate?.let { LocalDate.parse(it) },
+                                completedAt = LocalDateTime.now(),
                                 updatedAt = LocalDateTime.now()
                         )
                 val savedProject = projectRepository.save(updatedEntity).toGraphQLType()
@@ -196,6 +215,7 @@ private fun ProjectsEntity.toGraphQLType(): Project =
                 status = this.status,
                 startDate = this.startDate?.toString(),
                 endDate = this.endDate?.toString(),
+                completedAt = this.completedAt?.toString(),
                 createdAt = this.createdAt.toString(),
                 updatedAt = this.updatedAt?.toString()
         )

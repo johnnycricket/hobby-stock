@@ -2,12 +2,14 @@ import { ProjectService } from "@/services/project-service";
 import { ItemService } from "@/services/item-service";
 import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
+import { ProjectStatus } from "@/types/ProjectStatus";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, CheckCircle, Calendar } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { SupplyCheck } from "@/components/project/SupplyCheck";
 import { ProjectStatusBadge } from "@/components/project/ProjectStatusBadge";
+import { CompleteProjectModal } from "@/components/project/CompleteProjectModal";
 import { getErrorMessage } from "@/lib/utils";
 
 export function ProjectDetails() {
@@ -17,6 +19,7 @@ export function ProjectDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [itemsMap, setItemsMap] = useState<Map<number, Item>>(new Map());
 
   const fetchProject = async (projectId: string) => {
@@ -94,6 +97,26 @@ export function ProjectDetails() {
     }
   };
 
+  const handleCompleteClick = () => {
+    setShowCompleteModal(true);
+  };
+
+  const handleCompleteConfirm = async (endDate?: string) => {
+    if (!id) return;
+
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await ProjectService.completeProject(id, endDate);
+      if (response.errors) {
+        throw new Error(response.errors[0].message);
+      }
+      // Refresh project data
+      await fetchProject(id);
+    } catch (error: unknown) {
+      throw error; // Re-throw to let modal handle it
+    }
+  };
+
   if (loading) {
     return (
       <div className="px-4 py-6 sm:px-0">
@@ -135,6 +158,16 @@ export function ProjectDetails() {
             )}
           </div>
           <div className="flex gap-2">
+            {project.status !== ProjectStatus.COMPLETED && (
+              <button
+                onClick={handleCompleteClick}
+                aria-label="Mark as Complete"
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Mark as Complete
+              </button>
+            )}
             <button
               onClick={handleEdit}
               aria-label="Edit"
@@ -167,6 +200,22 @@ export function ProjectDetails() {
               <h2 className="text-sm font-medium text-gray-500">Start Date</h2>
               <p className="mt-1 text-lg text-gray-900">
                 {new Date(project.startDate).toLocaleDateString()}
+              </p>
+            </div>
+          )}
+
+          {project.completedAt && (
+            <div>
+              <h2 className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Completed On
+              </h2>
+              <p className="mt-1 text-lg text-gray-900">
+                {new Date(project.completedAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </p>
             </div>
           )}
@@ -259,6 +308,12 @@ export function ProjectDetails() {
         cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+      />
+      <CompleteProjectModal
+        isOpen={showCompleteModal}
+        onClose={() => setShowCompleteModal(false)}
+        onConfirm={handleCompleteConfirm}
+        projectName={project.name}
       />
     </div>
   );

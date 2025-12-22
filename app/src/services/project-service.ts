@@ -8,7 +8,7 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { projectsPaginated(page: ${page}, size: ${size}) { content { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { projectsPaginated(page: ${page}, size: ${size}) { content { id name description status startDate endDate completedAt createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -32,6 +32,7 @@ export namespace ProjectService {
             status 
             startDate 
             endDate 
+            completedAt
             createdAt 
             updatedAt 
             items { 
@@ -70,7 +71,7 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { projectsByStatusPaginated(status: ${status}, page: ${page}, size: ${size}) { content { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { projectsByStatusPaginated(status: ${status}, page: ${page}, size: ${size}) { content { id name description status startDate endDate completedAt createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -90,7 +91,7 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { searchProjectsPaginated(searchTerm: "${searchTerm}", page: ${page}, size: ${size}) { content { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
+        query: `query { searchProjectsPaginated(searchTerm: "${searchTerm}", page: ${page}, size: ${size}) { content { id name description status startDate endDate completedAt createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } pageInfo { totalElements totalPages currentPage hasNext hasPrevious } } }`,
       }),
     });
     if (!response.ok) {
@@ -254,7 +255,7 @@ export namespace ProjectService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { updateProjectStatus(id: "${id}", status: ${status}) { success message project { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } } }`,
+        query: `mutation { updateProjectStatus(id: "${id}", status: ${status}) { success message project { id name description status startDate endDate completedAt createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } } }`,
       }),
     });
     if (!response.ok) {
@@ -263,14 +264,16 @@ export namespace ProjectService {
     return await response.json();
   };
 
-  export const completeProject = async (id: number, endDate: string) => {
+  export const completeProject = async (id: number, endDate?: string) => {
     const response = await fetch("/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `mutation { completeProject(id: "${id}", endDate: "${endDate}") { success message project { id name description status startDate endDate createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } } }`,
+        query: `mutation { completeProject(id: "${id}", endDate: "${
+          endDate || ""
+        }") { success message project { id name description status startDate endDate completedAt createdAt updatedAt items { id projectId itemId quantityUsed createdAt } supplyCheck { itemId itemName requiredQuantity availableQuantity supplyStatus quantityGap } } } }`,
       }),
     });
     if (!response.ok) {

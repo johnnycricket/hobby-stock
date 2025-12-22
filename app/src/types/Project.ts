@@ -9,6 +9,7 @@ export type Project = {
   status: ProjectStatus;
   startDate?: string;
   endDate?: string;
+  completedAt?: string;
   createdAt: string;
   updatedAt?: string;
   items?: ProjectItem[];

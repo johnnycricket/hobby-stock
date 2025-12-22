@@ -68,6 +68,11 @@ constructor(
     return projectService.searchPaginated(searchTerm, page, size)
   }
 
+  @QueryMapping
+  fun completedProjectsPaginated(@Argument page: Int = 0, @Argument size: Int = 20): ProjectPage {
+    return projectService.findCompletedProjectsPaginated(page, size)
+  }
+
   @SchemaMapping(typeName = "Project", field = "items")
   fun items(project: Project): List<ProjectItem> {
     val projectUuid = project.id
