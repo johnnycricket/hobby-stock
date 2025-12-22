@@ -216,7 +216,7 @@ describe("Projects - Empty Paginated Responses", () => {
     });
   });
 
-  it("should handle empty content after filtering out completed projects", async () => {
+  it("should handle empty content aft er filtering out completed projects", async () => {
     const user = userEvent.setup();
     const completedProject = {
       id: 1,
