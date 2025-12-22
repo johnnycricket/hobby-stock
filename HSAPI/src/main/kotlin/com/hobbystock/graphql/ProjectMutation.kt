@@ -37,7 +37,10 @@ class ProjectMutationController @Autowired constructor(private val projectServic
   }
 
   @MutationMapping
-  fun updateProjectStatus(@Argument id: String, @Argument status: String): ProjectMutationResult {
+  fun updateProjectStatus(
+          @Argument id: String,
+          @Argument status: com.hobbystock.types.ProjectStatus
+  ): ProjectMutationResult {
     val uuid = UUID.fromString(id)
     return projectService.updateProjectStatus(uuid, status)
   }

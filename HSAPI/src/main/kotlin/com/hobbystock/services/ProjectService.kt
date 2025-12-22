@@ -7,6 +7,7 @@ import com.hobbystock.types.Project
 import com.hobbystock.types.ProjectInput
 import com.hobbystock.types.ProjectMutationResult
 import com.hobbystock.types.ProjectPage
+import com.hobbystock.types.ProjectStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -15,13 +16,16 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class ProjectService(private val projectRepository: ProjectRepository) {
+class ProjectService(
+        private val projectRepository: ProjectRepository,
+        private val statusTransitionValidator: StatusTransitionValidator
+) {
         fun findAll(): List<Project> = projectRepository.findAll().map { it.toGraphQLType() }
 
         fun findById(id: UUID): Project? =
                 projectRepository.findById(id).orElse(null)?.toGraphQLType()
 
-        fun findByStatus(status: String): List<Project> =
+        fun findByStatus(status: ProjectStatus): List<Project> =
                 projectRepository.findByStatus(status).map { it.toGraphQLType() }
 
         fun search(searchTerm: String): List<Project> =
@@ -45,7 +49,11 @@ class ProjectService(private val projectRepository: ProjectRepository) {
                 )
         }
 
-        fun findByStatusPaginated(status: String, page: Int = 0, size: Int = 20): ProjectPage {
+        fun findByStatusPaginated(
+                status: ProjectStatus,
+                page: Int = 0,
+                size: Int = 20
+        ): ProjectPage {
                 val pageable = PageRequest.of(page, size)
                 val pageResult = projectRepository.findByStatus(status, pageable)
 
@@ -100,13 +108,21 @@ class ProjectService(private val projectRepository: ProjectRepository) {
                         projectRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Project not found")
                         }
+                // Validate status transition if status is being changed
+                if (existing.status != project.status) {
+                        statusTransitionValidator.validateTransition(
+                                existing.status,
+                                project.status
+                        )
+                }
                 val updatedEntity =
                         existing.copy(
                                 name = project.name,
                                 description = project.description,
                                 status = project.status,
                                 startDate = project.startDate?.let { LocalDate.parse(it) },
-                                endDate = project.endDate?.let { LocalDate.parse(it) }
+                                endDate = project.endDate?.let { LocalDate.parse(it) },
+                                updatedAt = LocalDateTime.now()
                         )
                 return projectRepository.save(updatedEntity).toGraphQLType()
         }
@@ -130,12 +146,14 @@ class ProjectService(private val projectRepository: ProjectRepository) {
         }
 
         @Transactional
-        fun updateProjectStatus(id: UUID, status: String): ProjectMutationResult {
+        fun updateProjectStatus(id: UUID, status: ProjectStatus): ProjectMutationResult {
                 val existing =
                         projectRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Project not found")
                         }
-                val updatedEntity = existing.copy(status = status)
+                // Validate status transition
+                statusTransitionValidator.validateTransition(existing.status, status)
+                val updatedEntity = existing.copy(status = status, updatedAt = LocalDateTime.now())
                 val savedProject = projectRepository.save(updatedEntity).toGraphQLType()
                 return ProjectMutationResult(
                         success = true,
@@ -150,7 +168,17 @@ class ProjectService(private val projectRepository: ProjectRepository) {
                         projectRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Project not found")
                         }
-                val updatedEntity = existing.copy(endDate = endDate?.let { LocalDate.parse(it) })
+                // Validate transition to COMPLETED
+                statusTransitionValidator.validateTransition(
+                        existing.status,
+                        ProjectStatus.COMPLETED
+                )
+                val updatedEntity =
+                        existing.copy(
+                                status = ProjectStatus.COMPLETED,
+                                endDate = endDate?.let { LocalDate.parse(it) },
+                                updatedAt = LocalDateTime.now()
+                        )
                 val savedProject = projectRepository.save(updatedEntity).toGraphQLType()
                 return ProjectMutationResult(
                         success = true,

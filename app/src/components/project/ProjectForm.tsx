@@ -1,6 +1,7 @@
 import { Project, ProjectInput } from "@/types/Project";
 import { ProjectItem } from "@/types/ProjectItem";
 import { Item } from "@/types/Item";
+import { ProjectStatus } from "@/types/ProjectStatus";
 import { useMemo, useState, useEffect } from "react";
 import {
   FieldErrors,
@@ -18,7 +19,7 @@ import { getErrorMessage } from "@/lib/utils";
 type FormData = {
   name: string;
   description?: string;
-  status: string;
+  status: ProjectStatus;
 };
 
 type ProjectFormProps = {
@@ -47,7 +48,7 @@ export const ProjectForm = ({
     defaultValues: {
       name: project?.name || "",
       description: project?.description || "",
-      status: project?.status || "PLANNING",
+      status: project?.status || ProjectStatus.PLANNING,
     },
     mode: "onTouched",
   });
@@ -58,7 +59,7 @@ export const ProjectForm = ({
       methods.reset({
         name: project.name || "",
         description: project.description || "",
-        status: project.status || "PLANNING",
+        status: project.status || ProjectStatus.PLANNING,
       });
     }
   }, [project, methods]);
@@ -313,11 +314,10 @@ export const ProjectForm = ({
             {...methods.register("status", { required: "Status is required" })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
           >
-            <option value="PLANNING">Planning</option>
-            <option value="ACTIVE">Active</option>
-            <option value="ON_HOLD">On Hold</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="CANCELLED">Cancelled</option>
+            <option value={ProjectStatus.PLANNING}>Planning</option>
+            <option value={ProjectStatus.ACTIVE}>Active</option>
+            <option value={ProjectStatus.ON_HOLD}>On Hold</option>
+            <option value={ProjectStatus.COMPLETED}>Completed</option>
           </select>
           {methods.formState.errors.status && (
             <p className="mt-1 text-sm text-red-600">

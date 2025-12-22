@@ -6,6 +6,7 @@ import { ProjectService } from "@/services/project-service";
 import { ItemService } from "@/services/item-service";
 import { Project } from "@/types/Project";
 import { SupplyStatus } from "@/types/SupplyStatus";
+import { ProjectStatus } from "@/types/ProjectStatus";
 
 // Mock the services
 vi.mock("@/services/project-service");
@@ -36,7 +37,7 @@ describe("ProjectDetails with SupplyCheck", () => {
       id: 1,
       name: "Test Project",
       description: "Test Description",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       createdAt: "2025-01-01T00:00:00",
       supplyCheck: [
         {
@@ -75,7 +76,7 @@ describe("ProjectDetails with SupplyCheck", () => {
       id: 1,
       name: "Test Project",
       description: "Test Description",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       createdAt: "2025-01-01T00:00:00",
       items: [],
       supplyCheck: [],
@@ -106,7 +107,7 @@ describe("ProjectDetails with SupplyCheck", () => {
       id: 1,
       name: "Test Project",
       description: "Test Description",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       createdAt: "2025-01-01T00:00:00",
       supplyCheck: [
         {

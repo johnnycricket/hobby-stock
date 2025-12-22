@@ -7,6 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { SupplyCheck } from "@/components/project/SupplyCheck";
+import { ProjectStatusBadge } from "@/components/project/ProjectStatusBadge";
 import { getErrorMessage } from "@/lib/utils";
 
 export function ProjectDetails() {
@@ -156,7 +157,9 @@ export function ProjectDetails() {
         <div className="space-y-4">
           <div>
             <h2 className="text-sm font-medium text-gray-500">Status</h2>
-            <p className="mt-1 text-lg text-gray-900">{project.status}</p>
+            <div className="mt-1">
+              <ProjectStatusBadge status={project.status} size="md" />
+            </div>
           </div>
 
           {project.startDate && (
