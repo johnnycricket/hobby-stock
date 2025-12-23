@@ -330,13 +330,21 @@ describe("ProjectDetails with Completion Tracking", () => {
       expect(screen.getByText("Mark Project as Complete")).toBeInTheDocument();
     });
 
-    const confirmButton = screen.getByText("Mark as Complete", {
-      selector: "button",
-    });
-    await user.click(confirmButton);
+    // Find the confirm button in the modal (the submit button in the form)
+    // There are two "Mark as Complete" buttons - one in the page and one in the modal
+    // We want the one in the modal which is a submit button
+    const modalButtons = screen.getAllByText("Mark as Complete");
+    const modalConfirmButton = modalButtons.find(
+      (btn) => btn.getAttribute("type") === "submit"
+    );
+    expect(modalConfirmButton).toBeTruthy();
+    await user.click(modalConfirmButton!);
 
     await waitFor(() => {
-      expect(ProjectService.completeProject).toHaveBeenCalledWith(1, undefined);
+      expect(ProjectService.completeProject).toHaveBeenCalledWith(
+        "1",
+        undefined
+      );
     });
   });
 });

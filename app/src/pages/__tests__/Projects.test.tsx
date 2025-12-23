@@ -107,9 +107,7 @@ describe("Projects - Empty Paginated Responses", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(
-          "Invalid response format: missing projectsPaginated data"
-        )
+        screen.getByText("Invalid response format: missing paginated data")
       ).toBeInTheDocument();
     });
   });
@@ -138,6 +136,8 @@ describe("Projects - Empty Paginated Responses", () => {
   });
 
   it("should display appropriate message when filtering by status returns no results", async () => {
+    const user = userEvent.setup();
+
     vi.mocked(ProjectService.findByStatusPaginated).mockResolvedValue({
       data: {
         projectsByStatusPaginated: {
@@ -161,11 +161,14 @@ describe("Projects - Empty Paginated Responses", () => {
 
     renderWithRouter(<Projects />);
 
-    // Change filter to a specific status
+    // Wait for initial load
+    await waitFor(() => {
+      expect(screen.getByText("Projects")).toBeInTheDocument();
+    });
+
+    // Change filter to a specific status using userEvent
     const statusFilter = screen.getByLabelText(/Filter by Status:/i);
-    statusFilter.dispatchEvent(
-      new Event("change", { bubbles: true, cancelable: true })
-    );
+    await user.selectOptions(statusFilter, ProjectStatus.ACTIVE);
 
     await waitFor(() => {
       // The component should handle the empty response gracefully
