@@ -29,4 +29,10 @@ interface ProjectRepository : JpaRepository<ProjectsEntity, UUID> {
                 @Param("searchTerm") searchTerm: String,
                 pageable: Pageable
         ): Page<ProjectsEntity>
+
+        @Query("SELECT p FROM ProjectsEntity p WHERE p.status = :status")
+        fun findCompletedProjects(
+                @Param("status") status: ProjectStatus,
+                pageable: Pageable
+        ): Page<ProjectsEntity>
 }

@@ -141,7 +141,10 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                                 ProjectItemsEntity(
                                         projectId = projectId,
                                         itemId = itemId,
-                                        quantityUsed = BigDecimal.valueOf((quantityUsed ?: 0.0f).toDouble())
+                                        quantityUsed =
+                                                BigDecimal.valueOf(
+                                                        (quantityUsed ?: 0.0f).toDouble()
+                                                )
                                 )
                         val savedProjectItem = projectItemRepository.save(entity).toGraphQLType()
                         return ProjectItemMutationResult(
@@ -163,7 +166,8 @@ class ProjectItemService(private val projectItemRepository: ProjectItemRepositor
                         projectItemRepository.findById(id).orElseThrow {
                                 NoSuchElementException("Project item not found")
                         }
-                val updatedEntity = entity.copy(quantityUsed = BigDecimal.valueOf(quantityUsed.toDouble()))
+                val updatedEntity =
+                        entity.copy(quantityUsed = BigDecimal.valueOf(quantityUsed.toDouble()))
                 val savedProjectItem = projectItemRepository.save(updatedEntity).toGraphQLType()
                 return ProjectItemMutationResult(
                         success = true,
@@ -211,5 +215,6 @@ private fun ProjectsEntity.toProjectGraphQLType(): Project =
                 startDate = this.startDate?.toString(),
                 endDate = this.endDate?.toString(),
                 createdAt = this.createdAt.toString(),
-                updatedAt = this.updatedAt?.toString()
+                updatedAt = this.updatedAt.toString(),
+                completedAt = this.completedAt?.toString()
         )

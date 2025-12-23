@@ -9,6 +9,7 @@ data class Project(
         val status: ProjectStatus,
         val startDate: String?,
         val endDate: String?,
+        val completedAt: String?,
         val createdAt: String,
         val updatedAt: String?,
         val items: List<ProjectItem>? = null

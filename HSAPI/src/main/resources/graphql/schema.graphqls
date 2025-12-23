@@ -49,6 +49,7 @@ type Query {
     page: Int = 0
     size: Int = 20
   ): ProjectPage!
+  completedProjectsPaginated(page: Int = 0, size: Int = 20): ProjectPage!
   searchProjectsPaginated(
     searchTerm: String!
     page: Int = 0
@@ -216,6 +217,7 @@ type Project {
   status: ProjectStatus!
   startDate: String
   endDate: String
+  completedAt: String
   createdAt: String!
   updatedAt: String
   items: [ProjectItem]
