@@ -1,6 +1,5 @@
 import { Project } from "@/types/Project";
 import { Item } from "@/types/Item";
-import { ProjectStatus } from "@/types/ProjectStatus";
 import { Pencil, Trash2, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
