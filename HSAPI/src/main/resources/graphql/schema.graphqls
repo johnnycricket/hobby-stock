@@ -69,6 +69,11 @@ type Query {
     page: Int = 0
     size: Int = 20
   ): ProjectItemPage!
+
+  # project templates
+  projectTemplates: [ProjectTemplate!]!
+  projectTemplate(id: Int!): ProjectTemplate
+  projectTemplatesPaginated(page: Int = 0, size: Int = 20): ProjectTemplatePage!
 }
 
 type Mutation {
@@ -102,6 +107,15 @@ type Mutation {
     projectId: String!
     itemId: String!
   ): MutationResult!
+
+  # project templates
+  createProjectTemplate(input: ProjectTemplateInput!): ProjectTemplateMutationResult!
+  updateProjectTemplate(id: Int!, input: ProjectTemplateInput!): ProjectTemplateMutationResult!
+  deleteProjectTemplate(id: Int!): ProjectTemplateMutationResult!
+  createProjectFromTemplate(
+    templateId: Int!
+    projectInput: ProjectInput!
+  ): ProjectMutationResult!
 }
 
 # Input types
@@ -149,6 +163,18 @@ input ItemUpdateInput {
   notes: String
 }
 
+input ProjectTemplateInput {
+  name: String!
+  description: String
+  defaultStatus: ProjectStatus!
+  items: [ProjectTemplateItemInput!]
+}
+
+input ProjectTemplateItemInput {
+  itemId: String!
+  quantityUsed: Float!
+}
+
 # Mutation Response types
 type MutationResult {
   success: Boolean!
@@ -165,6 +191,12 @@ type ProjectMutationResult {
   success: Boolean!
   message: String
   project: Project
+}
+
+type ProjectTemplateMutationResult {
+  success: Boolean!
+  message: String
+  template: ProjectTemplate
 }
 
 # Enums
@@ -267,5 +299,29 @@ type CategoryPage {
 
 type ProjectItemPage {
   content: [ProjectItem!]!
+  pageInfo: PageInfo!
+}
+
+type ProjectTemplate {
+  id: Int!
+  name: String!
+  description: String
+  defaultStatus: ProjectStatus!
+  createdAt: String!
+  updatedAt: String
+  items: [ProjectTemplateItem!]
+}
+
+type ProjectTemplateItem {
+  id: Int!
+  templateId: Int!
+  itemId: String!
+  quantityUsed: Float!
+  createdAt: String!
+  item: Item
+}
+
+type ProjectTemplatePage {
+  content: [ProjectTemplate!]!
   pageInfo: PageInfo!
 }

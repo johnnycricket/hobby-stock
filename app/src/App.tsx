@@ -8,6 +8,8 @@ import { AddEditInventory } from "./pages/AddEditInventory";
 import { Projects } from "./pages/Projects";
 import { AddEditProject } from "./pages/AddEditProject";
 import { ProjectDetails } from "./pages/ProjectDetails";
+import { ProjectTemplates } from "./pages/ProjectTemplates";
+import { AddEditProjectTemplate } from "./pages/AddEditProjectTemplate";
 
 function App() {
   return (
@@ -22,6 +24,12 @@ function App() {
         <Route path="/projects/new" element={<AddEditProject />} />
         <Route path="/projects/:id/edit" element={<AddEditProject />} />
         <Route path="/projects/:id" element={<ProjectDetails />} />
+        <Route path="/templates" element={<ProjectTemplates />} />
+        <Route path="/templates/new" element={<AddEditProjectTemplate />} />
+        <Route
+          path="/templates/:id/edit"
+          element={<AddEditProjectTemplate />}
+        />
         <Route path="/test" element={<TestConnection />} />
       </Routes>
     </Layout>

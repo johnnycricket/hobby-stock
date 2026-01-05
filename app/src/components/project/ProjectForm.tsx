@@ -10,9 +10,11 @@ import {
   SubmitHandler,
   useForm,
 } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ProjectService } from "@/services/project-service";
 import { ProjectItemService } from "@/services/project-item-service";
+import { ProjectTemplateService } from "@/services/project-template-service";
+import { ProjectTemplate } from "@/types/ProjectTemplate";
 import { Trash2 } from "lucide-react";
 import { getErrorMessage } from "@/lib/utils";
 
@@ -36,6 +38,7 @@ export const ProjectForm = ({
   onProjectItemsChange,
 }: ProjectFormProps) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const isEditing = useMemo(() => project !== undefined, [project]);
   const [error, setError] = useState<string | null>(null);
   const [projectItems, setProjectItems] = useState<ProjectItem[]>(
@@ -43,6 +46,9 @@ export const ProjectForm = ({
   );
   const [selectedItemId, setSelectedItemId] = useState<string>("");
   const [quantityUsed, setQuantityUsed] = useState<string>("1");
+  const [templates, setTemplates] = useState<ProjectTemplate[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
 
   const methods = useForm<FormData>({
     defaultValues: {
@@ -52,6 +58,32 @@ export const ProjectForm = ({
     },
     mode: "onTouched",
   });
+
+  // Load templates for selection
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const response = await ProjectTemplateService.findAll();
+        if (!response.errors && response.data?.projectTemplates) {
+          setTemplates(response.data.projectTemplates);
+        }
+      } catch (error) {
+        console.error("Failed to load templates:", error);
+      }
+    };
+    if (!isEditing) {
+      loadTemplates();
+    }
+  }, [isEditing]);
+
+  // Handle template selection from URL parameter
+  useEffect(() => {
+    const templateIdParam = searchParams.get("templateId");
+    if (templateIdParam && !isEditing && templates.length > 0) {
+      setSelectedTemplateId(templateIdParam);
+      handleTemplateSelect(templateIdParam);
+    }
+  }, [searchParams, isEditing, templates]);
 
   // Reset form when project data changes (for edit mode)
   useEffect(() => {
@@ -106,24 +138,67 @@ export const ProjectForm = ({
         }
       } else {
         // Create project
-        const response = await ProjectService.createProject(projectData);
-        if (response.errors) {
-          setError(response.errors[0].message);
-          return;
-        }
-        if (response.data.createProject.success) {
-          const newProject = response.data.createProject.project;
-          navigate(`/projects/${newProject.id}`, {
-            state: {
-              message:
-                response.data.createProject.message ||
-                "Project created successfully",
-            },
-          });
-        } else {
-          setError(
-            response.data.createProject.message || "Failed to create project"
+        let newProject;
+        if (selectedTemplateId) {
+          // Create from template
+          const response = await ProjectTemplateService.createProjectFromTemplate(
+            parseInt(selectedTemplateId),
+            projectData
           );
+          if (response.errors) {
+            setError(response.errors[0].message);
+            return;
+          }
+          if (response.data.createProjectFromTemplate.success) {
+            newProject = response.data.createProjectFromTemplate.project;
+            navigate(`/projects/${newProject.id}`, {
+              state: {
+                message:
+                  response.data.createProjectFromTemplate.message ||
+                  "Project created from template successfully",
+              },
+            });
+          } else {
+            setError(
+              response.data.createProjectFromTemplate.message ||
+                "Failed to create project from template"
+            );
+          }
+        } else {
+          // Create regular project
+          const response = await ProjectService.createProject(projectData);
+          if (response.errors) {
+            setError(response.errors[0].message);
+            return;
+          }
+          if (response.data.createProject.success) {
+            newProject = response.data.createProject.project;
+            // Add project items if any were pre-populated from template selection
+            if (projectItems.length > 0 && newProject) {
+              for (const projectItem of projectItems) {
+                try {
+                  await ProjectItemService.addItemToProject(
+                    newProject.id.toString(),
+                    projectItem.itemId.toString(),
+                    projectItem.quantityUsed || 0
+                  );
+                } catch (error) {
+                  console.error("Failed to add item to project:", error);
+                }
+              }
+            }
+            navigate(`/projects/${newProject.id}`, {
+              state: {
+                message:
+                  response.data.createProject.message ||
+                  "Project created successfully",
+              },
+            });
+          } else {
+            setError(
+              response.data.createProject.message || "Failed to create project"
+            );
+          }
         }
       }
     } catch (error: unknown) {
@@ -249,6 +324,64 @@ export const ProjectForm = ({
     }
   };
 
+  const handleTemplateSelect = async (templateId: string) => {
+    if (!templateId || isEditing) return;
+
+    setLoadingTemplate(true);
+    try {
+      const response = await ProjectTemplateService.findById(
+        parseInt(templateId)
+      );
+      if (response.errors) {
+        setError(response.errors[0].message);
+        return;
+      }
+
+      const selectedTemplate = response.data.projectTemplate;
+      if (selectedTemplate) {
+        // Pre-populate form with template data
+        methods.reset({
+          name: selectedTemplate.name,
+          description: selectedTemplate.description || "",
+          status: selectedTemplate.defaultStatus,
+        });
+
+        // Pre-populate project items from template
+        if (selectedTemplate.items && selectedTemplate.items.length > 0) {
+          const templateProjectItems: ProjectItem[] =
+            selectedTemplate.items.map((ti) => ({
+              id: 0, // Temporary ID, will be set when project is created
+              projectId: 0, // Will be set when project is created
+              itemId: parseInt(ti.itemId),
+              quantityUsed: Number(ti.quantityUsed),
+              createdAt: new Date().toISOString(),
+            }));
+          setProjectItems(templateProjectItems);
+        }
+      }
+    } catch (error: unknown) {
+      setError(getErrorMessage(error));
+    } finally {
+      setLoadingTemplate(false);
+    }
+  };
+
+  const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const templateId = e.target.value;
+    setSelectedTemplateId(templateId);
+    if (templateId) {
+      handleTemplateSelect(templateId);
+    } else {
+      // Clear template data
+      methods.reset({
+        name: "",
+        description: "",
+        status: ProjectStatus.PLANNING,
+      });
+      setProjectItems([]);
+    }
+  };
+
   // Get items that are already added to the project
   const addedItemIds = new Set(projectItems.map((pi) => pi.itemId.toString()));
   const availableItems = items.filter(
@@ -264,6 +397,43 @@ export const ProjectForm = ({
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
             {error}
+          </div>
+        )}
+
+        {!isEditing && (
+          <div>
+            <label
+              htmlFor="template"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Create from Template (Optional)
+            </label>
+            <select
+              id="template"
+              value={selectedTemplateId}
+              onChange={handleTemplateChange}
+              disabled={loadingTemplate}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            >
+              <option value="">None - Create blank project</option>
+              {templates.map((template) => (
+                <option key={template.id} value={template.id.toString()}>
+                  {template.name}
+                  {template.items && template.items.length > 0
+                    ? ` (${template.items.length} items)`
+                    : ""}
+                </option>
+              ))}
+            </select>
+            {loadingTemplate && (
+              <p className="mt-1 text-sm text-gray-500">Loading template...</p>
+            )}
+            {selectedTemplateId && !loadingTemplate && (
+              <p className="mt-1 text-sm text-green-600">
+                Template selected. Form fields and items have been
+                pre-populated. You can modify them before saving.
+              </p>
+            )}
           </div>
         )}
 
